@@ -23,3 +23,10 @@
 .link:hover {
     color: var(--primary-yellow);
 }
+
+.section_container{
+    max-width: var(--max-width-1450);
+    padding-top: 120px;
+    margin: auto;
+  
+  }
