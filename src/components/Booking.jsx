@@ -1,7 +1,45 @@
 import { useFormik } from 'formik';
-import React from 'react'
+import L from 'leaflet';
+import React, { useEffect, useState } from 'react'
 import { RiArrowRightLine, RiMapPinLine, RiTimeLine } from 'react-icons/ri'
 import * as Yup from 'yup';
+import greenMarker from "/src/assets/pick.png";
+import redMarker from "/src/assets/drop.png";
+import markerShadow from "leaflet/dist/images/marker-shadow.png";
+import "leaflet/dist/leaflet.css"
+import axios from 'axios';
+import { toast } from "react-toastify";
+import { MapContainer, Marker, Polyline, Popup, TileLayer, useMap } from 'react-leaflet';
+
+const startIcon = new L.Icon({
+    iconUrl: greenMarker,
+    shadowUrl: markerShadow,
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [0, -41],
+});
+
+const endIcon = new L.Icon({
+    iconUrl: redMarker,
+    shadowUrl: markerShadow,
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [0, -41],
+});
+
+function AutoZoom({ routeCoords }) {
+    const map = useMap();
+
+    useEffect(() => {
+        if (routeCoords.length > 0) {
+            const bounds = L.latLngBounds(routeCoords.map((point) => [point.lat, point.lng]));
+            map.fitBounds(bounds, { padding: [50, 50] });
+        }
+    }, [routeCoords, map]);
+
+    return null;
+}
+
 
 const validationSchema = Yup.object({
     pickLocation: Yup.string().required("Pick location is required").matches(/^[A-Za-z\s]+$/, "Only letters and spaces are allowed"),
@@ -13,6 +51,19 @@ const validationSchema = Yup.object({
 });
 
 const Booking = () => {
+    console.log(import.meta.env.VITE_OPENROUTESERVICE_API_KEY);
+    console.log(import.meta.env.VITE_OPEN_CAGE_API_KEY);
+    const [startCoords, setStartCoords] = useState(null);
+    const [endCoords, setEndCoords] = useState(null);
+    const [routeCoords, setRouteCoords] = useState([]);
+    const [distance, setDistance] = useState(null);
+    const [duration, setDuration] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const [debouncedPickLocation, setDebouncedPickLocation] = useState("");
+    const [debouncedDropLocation, setDebouncedDropLocation] = useState("");
+
+
 
     const formik = useFormik({
         initialValues: {
@@ -30,6 +81,117 @@ const Booking = () => {
 
         }
     });
+
+    useEffect(() => {
+        const pickTimer = setTimeout(() => {
+            setDebouncedPickLocation(formik.values.pickLocation);
+        }, 2000); // 2-second delay
+
+        const dropTimer = setTimeout(() => {
+            setDebouncedDropLocation(formik.values.dropLocation);
+        }, 2000); // 2-second delay
+
+        return () => {
+            clearTimeout(pickTimer);
+            clearTimeout(dropTimer);
+        };
+    }, [formik.values.pickLocation, formik.values.dropLocation]);
+
+    const fetchCoordinates = async (city) => {
+        if (!city.trim()) return null;
+
+        try {
+            const response = await axios.get("https://api.opencagedata.com/geocode/v1/json", {
+                params: {
+                    key: import.meta.env.VITE_OPEN_CAGE_API_KEY,
+                    q: city,
+                    countrycode: "LK",
+                    limit: 1,
+                },
+            });
+
+            if (response.data.results.length === 0) {
+                throw new Error("City not found.");
+            }
+
+            const result = response.data.results[0];
+
+            if (!result.components || result.components.country_code !== "lk") {
+                throw new Error("Location is outside Sri Lanka.");
+
+            }
+
+            return {
+                lat: result.geometry.lat,
+                lng: result.geometry.lng,
+            };
+        } catch (error) {
+            console.error("Error fetching coordinates:", error.message);
+            return null;
+        }
+    };
+
+    useEffect(() => {
+        const getDistance = async () => {
+            if (!debouncedPickLocation || !debouncedDropLocation) {
+                setStartCoords(null);
+                setEndCoords(null);
+                setRouteCoords([]);
+                setDistance(null);
+                setDuration(null);
+                setError(null);
+                return;
+            }
+
+            setLoading(true);
+            setError(null);
+            setDistance(null);
+            setDuration(null);
+            setRouteCoords([]);
+
+            try {
+                const start = await fetchCoordinates(debouncedPickLocation);
+                const end = await fetchCoordinates(debouncedDropLocation);
+
+                if (!start || !end) {
+                    setError("Invalid Sri Lankan city names. Please try again.");
+                    toast.error("Invalid Sri Lankan city names. Please try again.");
+                    setStartCoords(null);
+                    setEndCoords(null);
+                    return;
+                }
+
+                setStartCoords(start);
+                setEndCoords(end);
+
+                const response = await axios.get("https://api.openrouteservice.org/v2/directions/cycling-road", {
+                    params: {
+                        api_key: import.meta.env.VITE_OPENROUTESERVICE_API_KEY,
+                        start: `${start.lng},${start.lat}`,
+                        end: `${end.lng},${end.lat}`,
+                    },
+                });
+
+                const distanceInKm = response.data.features[0].properties.segments[0].distance / 1000;
+                const durationInSec = response.data.features[0].properties.segments[0].duration;
+
+                setDistance(distanceInKm);
+                setDuration(durationInSec / 60);
+
+                const route = response.data.features[0].geometry.coordinates.map(([lng, lat]) => ({ lat, lng }));
+                setRouteCoords(route);
+            } catch (error) {
+                console.error("Error calculating distance:", error.message);
+                toast.error("Error calculating distance. Please try again.");
+                setStartCoords(null);
+                setEndCoords(null);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        getDistance();
+    }, [debouncedPickLocation, debouncedDropLocation]);
 
     return (
         <>
@@ -140,7 +302,7 @@ const Booking = () => {
                                 <input
                                     type="checkbox"
                                     name="fillDetails"
-                                    checed={formik.values.fillDetails}
+                                    checked={formik.values.fillDetails}
                                     onChange={formik.handleChange}
                                     className="w-5 h-5 text-primary-yellow border-gray-300 rounded focus:ring-0 checked:bg-yellow-500"
                                 />
@@ -155,21 +317,52 @@ const Booking = () => {
 
                         <div className="flex-1 flex flex-col">
                             <div className="w-full h-[250px] bg-gray-200 rounded-t-md flex items-center justify-center text-gray-500">
+                                <MapContainer
+                                    center={[6.9271, 79.8612]}
+                                    zoom={10}
+                                    style={{ height: "100%", width: "100%" }}
+                                >
+                                    <TileLayer
+                                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                                    />
 
+                                    {startCoords && (
+                                        <Marker position={[startCoords.lat, startCoords.lng]} icon={startIcon}>
+                                            <Popup> Start Location: {formik.values.pickLocation}</Popup>
+                                        </Marker>
+                                    )}
+
+                                    {endCoords && (
+                                        <Marker position={[endCoords.lat, endCoords.lng]} icon={endIcon}>
+                                            <Popup>End Location: {formik.values.dropLocation}</Popup>
+                                        </Marker>
+                                    )}
+
+                                    <Polyline positions={routeCoords.map((point) => [point.lat, point.lng])} color="blue" weight={4} opacity={0.7} />
+
+                                    <AutoZoom routeCoords={routeCoords} />
+                                </MapContainer>
 
                             </div>
 
-                            <div className="flex flex-col sm:flex-row justify-between items-center border px-16 border-gray-300 rounded-b-md p-4 bg-white shadow-sm">
+                            <div className="flex flex-col sm:flex-row justify-between items-center border px-10  border-gray-300 rounded-b-md p-4 bg-white shadow-sm">
                                 <div className="flex items-center text-gray-700 space-x-2 mb-4 sm:mb-0">
                                     <RiMapPinLine className="w-8 h-8 text-gray-500" />
-                                    <span>234 km</span>
+                                    <span>{distance ? `${distance.toFixed(2)} km` : "0 Km"}</span>
                                 </div>
                                 <div className="flex items-center text-gray-700 space-x-2">
                                     <RiTimeLine className="w-8 h-8 text-gray-500" />
-                                    <span>234 minits</span>
+                                    <span>
+                                        {duration
+                                            ? (duration >= 60
+                                                ? `${(duration / 60).toFixed(2)} h` 
+                                                : `${duration.toFixed(0)} minutes`) 
+                                            : "0.00 minutes"}
+                                    </span>
                                 </div>
                             </div>
-
+                            <p className="text-red-500 text-sm mt-1">{error}</p>
 
                             <div className="flex justify-end mt-4">
                                 <button type="submit" className='bg-primary-yellow text-primary-black py-2 px-4 rounded-md text-lg shadow-lg'>Checkout</button>
