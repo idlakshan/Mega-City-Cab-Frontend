@@ -365,7 +365,14 @@ const Booking = () => {
                             <p className="text-red-500 text-sm mt-1">{error}</p>
 
                             <div className="flex justify-end mt-4">
-                                <button type="submit" className='bg-primary-yellow text-primary-black py-2 px-4 rounded-md text-lg shadow-lg'>Checkout</button>
+                            <button
+                                    type="submit"
+                                    disabled={!formik.isValid || !formik.dirty}
+                                    className={`bg-primary-yellow text-primary-black py-2 px-4 rounded-md text-lg shadow-lg ${!formik.isValid || !formik.dirty ? "opacity-50 cursor-not-allowed" : ""
+                                        }`}
+                                >
+                                    Checkout
+                                </button>
                             </div>
                         </div>
                     </div>

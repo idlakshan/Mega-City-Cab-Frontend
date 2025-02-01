@@ -33,7 +33,8 @@
 
   .section_container_feature{
     max-width: var(--max-width-1450);
-    padding-top: 340px;
     margin: auto;
     /* border: 1px solid red; */
   }
+
+  
