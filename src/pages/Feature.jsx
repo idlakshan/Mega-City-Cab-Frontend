@@ -22,9 +22,9 @@ const cards = [
 
 const Feature = () => {
     return (
-<div className='section_container_feature pt-[340px] sm:pt-[100px] md:pt-[100px] lg:pt-[300px]'>
+<div className='section_container_feature pt-[340px]  sm:pt-[100px] md:pt-[100px] lg:pt-[300px]'>
     <div className='w-full flex flex-col items-center justify-center space-y-1'>
-        <h1 className='text-primary-black text-5xl'>Our <span className='font-semibold'>Features</span></h1>
+        <h1 className='text-primary-black text-5xl pt-10'>Our <span className='font-semibold'>Features</span></h1>
         <p className='text-primary-black pt-3 text-lg'>Discover why Mega Cabs is a cut above the rest</p>
     </div>
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 ml-3 px-14">
