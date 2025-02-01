@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 
 const FAQ = () => {
     const [activeIndex, setActiveIndex] = useState(null);
@@ -38,7 +39,7 @@ const FAQ = () => {
                 <h1 className='text-white text-5xl'><span className='font-semibold'>FAQ</span></h1>
                 <p className='text-white pt-3 text-lg'>Discover more information about Mega Cabs for your travel</p>
             </div>
-            
+
             <div className='w-full px-4 md:px-16 mt-10'>
                 {faqs.map((faq, index) => (
                     <div key={index} className='mb-6 w-[90%] md:w-[80%] mx-auto'>
@@ -67,15 +68,15 @@ const FAQ = () => {
                 ))}
             </div>
 
-      
+
             <div className='w-full flex justify-center mt-10'>
-                <button
-               
-                    className='text-primary-black bg-white py-3 px-6 rounded-md flex items-center justify-center space-x-2 font-semibold mb-6'
+                <Link
+                    to="/faqs"
+                    className="text-primary-black bg-white py-3 px-6 rounded-md flex items-center justify-center space-x-2 font-semibold mb-6"
                 >
                     <span>See More</span>
                     <img src="src/assets/arrow.png" alt="arrow icon" className="w-5 h-5" />
-                </button>
+                </Link>
             </div>
         </div>
     );
