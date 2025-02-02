@@ -43,8 +43,8 @@ const FAQ_Main = () => {
   ];
 
   return (
-    <div className='h-screen section_container'>
-      <div className='h-3/5 bg-cover bg-center relative' style={{
+    <div className='section_container'>
+      <div className='h-96 bg-cover bg-center relative' style={{
         backgroundImage: "url('https://kangaroocabs.com/assets/hero-ac80e8ed.jpg')",
         backgroundPosition: 'center 20%',
       }}>

@@ -34,7 +34,7 @@ const cards = [
 
 const Feature = () => {
     return (
-        <div className='section_container_feature pt-[340px] sm:pt-[100px] md:pt-[100px] lg:pt-[300px] !mb-20'>
+        <div className='section_container_feature pt-[340px] sm:pt-[10px] md:pt-[100px] lg:pt-[300px] !mb-20'>
             <div className='w-full flex flex-col items-center justify-center space-y-1'>
                 <h1 className='text-primary-black text-4xl sm:text-5xl font-bold pt-10'>
                     Our <span className='text-primary-blue'>Features</span>

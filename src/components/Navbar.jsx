@@ -14,7 +14,7 @@ const Navbar = () => {
                     <Link to="/">Mega City Cabs</Link>
                 </div>
 
-                <ul className="hidden md:flex gap-10 font-semibold text-primary-black ml-24">
+                <ul className="hidden md:flex gap-10 font-semibold text-primary-black ">
                     <li className="link"><Link to="/">Home</Link></li>
                     <li className="link"><Link to="/about">About</Link></li>
                     <li className="link"><Link to="/faqs">FAQs</Link></li>
