@@ -1,7 +1,15 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FaChevronUp, FaChevronDown } from 'react-icons/fa';
+import { useLocation } from 'react-router-dom';
 
 const FAQ_Main = () => {
+
+  const location = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location]);
+
   const [activeIndex, setActiveIndex] = useState(null);
 
   const toggleFAQ = (index) => {

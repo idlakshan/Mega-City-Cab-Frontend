@@ -5,6 +5,7 @@ import Navbar from './components/Navbar'
 import "remixicon/fonts/remixicon.css";
 
 
+
 function App() {
 
 
@@ -12,6 +13,7 @@ function App() {
     <>
     <Navbar/>
     <Outlet/>
+
     </>
   )
 }
