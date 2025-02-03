@@ -10,6 +10,7 @@ import "leaflet/dist/leaflet.css"
 import axios from 'axios';
 import { toast } from "react-toastify";
 import { MapContainer, Marker, Polyline, Popup, TileLayer, useMap } from 'react-leaflet';
+import VehicleSelection from './VehicleSelection';
 
 const startIcon = new L.Icon({
     iconUrl: greenMarker,
@@ -50,13 +51,13 @@ const validationSchema = Yup.object({
     email: Yup.string().required("Email is required").email("Invalid email address"),
 });
 
-const Booking = () => {
+const Booking = ({ distance, setDistance }) => {
     console.log(import.meta.env.VITE_OPENROUTESERVICE_API_KEY);
     console.log(import.meta.env.VITE_OPEN_CAGE_API_KEY);
     const [startCoords, setStartCoords] = useState(null);
     const [endCoords, setEndCoords] = useState(null);
     const [routeCoords, setRouteCoords] = useState([]);
-    const [distance, setDistance] = useState(null);
+
     const [duration, setDuration] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -85,11 +86,11 @@ const Booking = () => {
     useEffect(() => {
         const pickTimer = setTimeout(() => {
             setDebouncedPickLocation(formik.values.pickLocation);
-        }, 2000); // 2-second delay
+        }, 1500);
 
         const dropTimer = setTimeout(() => {
             setDebouncedDropLocation(formik.values.dropLocation);
-        }, 2000); // 2-second delay
+        }, 1500);
 
         return () => {
             clearTimeout(pickTimer);
@@ -164,7 +165,7 @@ const Booking = () => {
                 setStartCoords(start);
                 setEndCoords(end);
 
-                const response = await axios.get("https://api.openrouteservice.org/v2/directions/cycling-road", {
+                const response = await axios.get("https://api.openrouteservice.org/v2/directions/driving-car", {
                     params: {
                         api_key: import.meta.env.VITE_OPENROUTESERVICE_API_KEY,
                         start: `${start.lng},${start.lat}`,
@@ -195,11 +196,10 @@ const Booking = () => {
 
     return (
         <>
-            <div className="absolute top-[60%] sm:top-[65%] md:top-[60%] lg:top-[60%] xl:top-[60%] 2xl:top-[90%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white py-4 px-6 rounded-lg shadow-lg w-11/12 sm:w-10/12 md:w-9/12 lg:w-8/12 xl:w-7/12 border-2 border-custom-opacity">
-                <div className="w-full h-[150px] border-2 border-custom-opacity rounded-md">
-
-                </div>
-
+            <div className="absolute top-[60%] sm:top-[65%] md:top-[60%] lg:top-[60%] xl:top-[82%] 2xl:top-[90%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white py-4 px-6 rounded-lg shadow-lg w-11/12 sm:w-10/12 md:w-9/12 lg:w-8/12 xl:w-8/12 border-2 border-custom-opacity">
+                               
+                        <VehicleSelection />
+                   
                 <form onSubmit={formik.handleSubmit}>
                     <div className="w-full flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4 my-6">
                         <div className="w-full sm:flex-1">
@@ -356,8 +356,8 @@ const Booking = () => {
                                     <span>
                                         {duration
                                             ? (duration >= 60
-                                                ? `${(duration / 60).toFixed(2)} h` 
-                                                : `${duration.toFixed(0)} minutes`) 
+                                                ? `${(duration / 60).toFixed(2)} h`
+                                                : `${duration.toFixed(0)} minutes`)
                                             : "0.00 minutes"}
                                     </span>
                                 </div>
@@ -365,7 +365,7 @@ const Booking = () => {
                             <p className="text-red-500 text-sm mt-1">{error}</p>
 
                             <div className="flex justify-end mt-4">
-                            <button
+                                <button
                                     type="submit"
                                     disabled={!formik.isValid || !formik.dirty}
                                     className={`bg-primary-yellow text-primary-black py-2 px-4 rounded-md text-lg shadow-lg ${!formik.isValid || !formik.dirty ? "opacity-50 cursor-not-allowed" : ""

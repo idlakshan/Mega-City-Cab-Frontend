@@ -4,6 +4,7 @@ import Feature from './Feature'
 import FAQ from '../components/FAQ'
 import ContactUs from './ContactUs'
 
+
 const Home = () => {
 
   useEffect(()=>{
@@ -16,7 +17,6 @@ const Home = () => {
     <Feature/>
     <FAQ/>
     <ContactUs/>
-    
     </>
   )
 }
