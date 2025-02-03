@@ -51,9 +51,9 @@ const validationSchema = Yup.object({
     email: Yup.string().required("Email is required").email("Invalid email address"),
 });
 
-const Booking = ({ distance, setDistance }) => {
-    console.log(import.meta.env.VITE_OPENROUTESERVICE_API_KEY);
-    console.log(import.meta.env.VITE_OPEN_CAGE_API_KEY);
+const Booking = ({distance,setDistance}) => {
+   // console.log(import.meta.env.VITE_OPENROUTESERVICE_API_KEY);
+   // console.log(import.meta.env.VITE_OPEN_CAGE_API_KEY);
     const [startCoords, setStartCoords] = useState(null);
     const [endCoords, setEndCoords] = useState(null);
     const [routeCoords, setRouteCoords] = useState([]);
@@ -64,7 +64,8 @@ const Booking = ({ distance, setDistance }) => {
     const [debouncedPickLocation, setDebouncedPickLocation] = useState("");
     const [debouncedDropLocation, setDebouncedDropLocation] = useState("");
 
-
+  console.log(distance);
+  
 
     const formik = useFormik({
         initialValues: {
@@ -198,7 +199,7 @@ const Booking = ({ distance, setDistance }) => {
         <>
             <div className="absolute top-[60%] sm:top-[65%] md:top-[60%] lg:top-[60%] xl:top-[82%] 2xl:top-[90%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white py-4 px-6 rounded-lg shadow-lg w-11/12 sm:w-10/12 md:w-9/12 lg:w-8/12 xl:w-8/12 border-2 border-custom-opacity">
                                
-                        <VehicleSelection />
+                        <VehicleSelection  distance={distance} setDistance={setDistance}/>
                    
                 <form onSubmit={formik.handleSubmit}>
                     <div className="w-full flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4 my-6">
