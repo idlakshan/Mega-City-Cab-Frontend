@@ -1,12 +1,8 @@
-import React, { useState } from 'react'
 import Booking from './Booking'
 
 
-
 const Banner = () => {
-    const [distance, setDistance] = useState(null);
-
-
+  
     return (
         <div className="relative h-screen section_container">
             <div className="absolute inset-0 bg-cover bg-center" style={{
@@ -26,7 +22,7 @@ const Banner = () => {
                     Your safety and comfort is our concern
                 </h3>
             </div>
-           <Booking distance={distance} setDistance={setDistance}/>
+           <Booking />
         </div>
     )
 }

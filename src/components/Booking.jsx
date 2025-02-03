@@ -11,6 +11,8 @@ import axios from 'axios';
 import { toast } from "react-toastify";
 import { MapContainer, Marker, Polyline, Popup, TileLayer, useMap } from 'react-leaflet';
 import VehicleSelection from './VehicleSelection';
+import { useDispatch, useSelector } from 'react-redux';
+import { setDistance } from '../redux/features/vehicle/distanceSlice';
 
 const startIcon = new L.Icon({
     iconUrl: greenMarker,
@@ -51,7 +53,10 @@ const validationSchema = Yup.object({
     email: Yup.string().required("Email is required").email("Invalid email address"),
 });
 
-const Booking = ({distance,setDistance}) => {
+const Booking = () => {
+
+    const dispatch = useDispatch();
+    const distance = useSelector((state) => state.distance.value);
    // console.log(import.meta.env.VITE_OPENROUTESERVICE_API_KEY);
    // console.log(import.meta.env.VITE_OPEN_CAGE_API_KEY);
     const [startCoords, setStartCoords] = useState(null);
@@ -65,7 +70,7 @@ const Booking = ({distance,setDistance}) => {
     const [debouncedDropLocation, setDebouncedDropLocation] = useState("");
 
   console.log(distance);
-  
+
 
     const formik = useFormik({
         initialValues: {
@@ -142,6 +147,7 @@ const Booking = ({distance,setDistance}) => {
                 setDistance(null);
                 setDuration(null);
                 setError(null);
+                dispatch(setDistance(0));
                 return;
             }
 
@@ -150,6 +156,7 @@ const Booking = ({distance,setDistance}) => {
             setDistance(null);
             setDuration(null);
             setRouteCoords([]);
+            dispatch(setDistance(0));
 
             try {
                 const start = await fetchCoordinates(debouncedPickLocation);
@@ -166,7 +173,7 @@ const Booking = ({distance,setDistance}) => {
                 setStartCoords(start);
                 setEndCoords(end);
 
-                const response = await axios.get("https://api.openrouteservice.org/v2/directions/driving-car", {
+                const response = await axios.get("https://api.openrouteservice.org/v2/directions/cycling-road", {
                     params: {
                         api_key: import.meta.env.VITE_OPENROUTESERVICE_API_KEY,
                         start: `${start.lng},${start.lat}`,
@@ -176,8 +183,8 @@ const Booking = ({distance,setDistance}) => {
 
                 const distanceInKm = response.data.features[0].properties.segments[0].distance / 1000;
                 const durationInSec = response.data.features[0].properties.segments[0].duration;
-
-                setDistance(distanceInKm);
+                 dispatch(setDistance(distanceInKm))
+               // setDistance(distanceInKm);
                 setDuration(durationInSec / 60);
 
                 const route = response.data.features[0].geometry.coordinates.map(([lng, lat]) => ({ lat, lng }));
@@ -193,7 +200,7 @@ const Booking = ({distance,setDistance}) => {
         };
 
         getDistance();
-    }, [debouncedPickLocation, debouncedDropLocation]);
+    }, [debouncedPickLocation, debouncedDropLocation,dispatch]);
 
     return (
         <>

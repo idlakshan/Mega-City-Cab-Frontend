@@ -9,11 +9,13 @@ import Cash from '../assets/cash.png';
 import Passengers from '../assets/passenger.png';
 import Air from '../assets/snow.png';
 import Baggage from '../assets/baggage.png';
+import { useSelector } from 'react-redux';
 
 const featureIcons = [Cash, Air, Passengers, Baggage];
 
-const VehicleSelection = ({ distance, setDistance }) => {
+const VehicleSelection = () => {
   const [selectedVehicle, setSelectedVehicle] = useState('Budget');
+  const distance = useSelector((state) => state.distance.value);
 
   const vehicles = [
     { name: 'Budget', icon: Budget, details: { title: 'Budget', features: ['Flexible Price', 'Air Conditioned', '3 Passengers', 'Limited Baggage'], price: 250.00 } },
@@ -53,11 +55,11 @@ const VehicleSelection = ({ distance, setDistance }) => {
               <div className="flex flex-col md:flex-row justify-between items-center w-full mb-3">
                 <h2 className="text-lg font-bold text-primary-black">{selectedVehicleDetails.title}</h2>
                 <div className="bg-primary-light w-32 h-8 rounded-md shadow-sm flex justify-center items-center mt-2 md:mt-0">
-                  <span className="text-primary-black font-bold">
-                    LKR {(isNaN(parseFloat(selectedVehicleDetails.price)) || isNaN(parseFloat(distance))
-                      ? '0.00'
-                      : (parseFloat(selectedVehicleDetails.price) * parseFloat(distance)).toFixed(2))}
-                  </span>
+                <span className="text-primary-black font-bold">
+          LKR {(isNaN(parseFloat(selectedVehicleDetails.price)) || isNaN(parseFloat(distance))
+            ? '0.00'
+            : (parseFloat(selectedVehicleDetails.price) * parseFloat(distance)).toFixed(2))}
+        </span>
 
 
                 </div>

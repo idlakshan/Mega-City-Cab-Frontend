@@ -1,8 +1,9 @@
+
 import { configureStore } from '@reduxjs/toolkit';
-import vehicleReducer from './features/vehicle/vehicleSlice';
+import distanceReducer from '../redux/features/vehicle/distanceSlice';
 
 export const store = configureStore({
   reducer: {
-    vehicle: vehicleReducer,
+    distance: distanceReducer,
   },
 });
