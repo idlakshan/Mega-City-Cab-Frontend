@@ -47,7 +47,14 @@ function AutoZoom({ routeCoords }) {
 const validationSchema = Yup.object({
     pickLocation: Yup.string().required("Pick location is required").matches(/^[A-Za-z\s]+$/, "Only letters and spaces are allowed"),
     dropLocation: Yup.string().required("Drop Location is required").matches(/^[A-Za-z\s]+$/, "Only letters and spaces are allowed"),
-    dateTime: Yup.date().required("Date and Time is required").min(new Date(), "Date and Time must be in the future"),
+    dateTime: Yup.date()
+    .required("Date and Time is required")
+    .test("is-future", "Date and Time must be at least 1 hour in the future", (value) => {
+      if (!value) return false;
+      const now = new Date();
+      const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000); 
+      return value > oneHourLater;
+    }),
     phoneNumber: Yup.string().required("Phone Number is required").matches(/^(?:\+94|0)?(?:7\d{8})$/, "Invalid Sri Lankan mobile number"),
     name: Yup.string().required("Name is required").matches(/^[A-Za-z\s]{3,}$/, "Name must contain at least 3 words and only letters"),
     email: Yup.string().required("Email is required").email("Invalid email address"),
@@ -69,7 +76,7 @@ const Booking = () => {
     const [debouncedPickLocation, setDebouncedPickLocation] = useState("");
     const [debouncedDropLocation, setDebouncedDropLocation] = useState("");
 
-  console.log(distance);
+ // console.log(distance);
 
 
     const formik = useFormik({
@@ -92,11 +99,11 @@ const Booking = () => {
     useEffect(() => {
         const pickTimer = setTimeout(() => {
             setDebouncedPickLocation(formik.values.pickLocation);
-        }, 1500);
+        }, 1000);
 
         const dropTimer = setTimeout(() => {
             setDebouncedDropLocation(formik.values.dropLocation);
-        }, 1500);
+        }, 1000);
 
         return () => {
             clearTimeout(pickTimer);
