@@ -78,7 +78,7 @@ const Navbar = () => {
                       <li key={index}>
                         <Link
                           onClick={() => setIsDropDownToggle(false)}
-                          className="dropdown-items no-hover"
+                          className="dropdown-items link"
                           to={menu.path}
                         >
                           {menu.label}

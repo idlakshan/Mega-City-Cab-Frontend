@@ -8,11 +8,12 @@ import redMarker from "/src/assets/drop.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
 import "leaflet/dist/leaflet.css"
 import axios from 'axios';
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import { MapContainer, Marker, Polyline, Popup, TileLayer, useMap } from 'react-leaflet';
 import VehicleSelection from './VehicleSelection';
 import { useDispatch, useSelector } from 'react-redux';
 import { setDistance } from '../redux/features/vehicle/distanceSlice';
+import { useFetchCurrentUserQuery } from '../redux/features/auth/authApi';
 
 const startIcon = new L.Icon({
     iconUrl: greenMarker,
@@ -48,13 +49,13 @@ const validationSchema = Yup.object({
     pickLocation: Yup.string().required("Pick location is required").matches(/^[A-Za-z\s]+$/, "Only letters and spaces are allowed"),
     dropLocation: Yup.string().required("Drop Location is required").matches(/^[A-Za-z\s]+$/, "Only letters and spaces are allowed"),
     dateTime: Yup.date()
-    .required("Date and Time is required")
-    .test("is-future", "Date and Time must be at least 1 hour in the future", (value) => {
-      if (!value) return false;
-      const now = new Date();
-      const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000); 
-      return value > oneHourLater;
-    }),
+        .required("Date and Time is required")
+        .test("is-future", "Date and Time must be at least 1 hour in the future", (value) => {
+            if (!value) return false;
+            const now = new Date();
+            const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000);
+            return value > oneHourLater;
+        }),
     phoneNumber: Yup.string().required("Phone Number is required").matches(/^(?:\+94|0)?(?:7\d{8})$/, "Invalid Sri Lankan mobile number"),
     name: Yup.string().required("Name is required").matches(/^[A-Za-z\s]{3,}$/, "Name must contain at least 3 words and only letters"),
     email: Yup.string().required("Email is required").email("Invalid email address"),
@@ -64,8 +65,12 @@ const Booking = () => {
 
     const dispatch = useDispatch();
     const distance = useSelector((state) => state.distance.value);
-   // console.log(import.meta.env.VITE_OPENROUTESERVICE_API_KEY);
-   // console.log(import.meta.env.VITE_OPEN_CAGE_API_KEY);
+    const { data: userData, refetch } = useFetchCurrentUserQuery();
+      const { user } = useSelector((state) => state.auth);
+     console.log(user);
+     
+    // console.log(import.meta.env.VITE_OPENROUTESERVICE_API_KEY);
+    // console.log(import.meta.env.VITE_OPEN_CAGE_API_KEY);
     const [startCoords, setStartCoords] = useState(null);
     const [endCoords, setEndCoords] = useState(null);
     const [routeCoords, setRouteCoords] = useState([]);
@@ -76,7 +81,7 @@ const Booking = () => {
     const [debouncedPickLocation, setDebouncedPickLocation] = useState("");
     const [debouncedDropLocation, setDebouncedDropLocation] = useState("");
 
- // console.log(distance);
+    // console.log(distance);
 
 
     const formik = useFormik({
@@ -190,8 +195,8 @@ const Booking = () => {
 
                 const distanceInKm = response.data.features[0].properties.segments[0].distance / 1000;
                 const durationInSec = response.data.features[0].properties.segments[0].duration;
-                 dispatch(setDistance(distanceInKm))
-               // setDistance(distanceInKm);
+                dispatch(setDistance(distanceInKm))
+                // setDistance(distanceInKm);
                 setDuration(durationInSec / 60);
 
                 const route = response.data.features[0].geometry.coordinates.map(([lng, lat]) => ({ lat, lng }));
@@ -207,14 +212,48 @@ const Booking = () => {
         };
 
         getDistance();
-    }, [debouncedPickLocation, debouncedDropLocation,dispatch]);
+    }, [debouncedPickLocation, debouncedDropLocation, dispatch]);
+
+    useEffect(() => {
+
+       
+        if (formik.values.fillDetails && userData) {
+            console.log("User Data ",userData);
+            
+            formik.setValues({
+                ...formik.values,
+                phoneNumber: userData.phone,
+                name: userData.name,
+                email: userData.email,
+            });
+        } else if (!formik.values.fillDetails) {
+            formik.setValues({
+                ...formik.values,
+                phoneNumber: "",
+                name: "",
+                email: "",
+            });
+        }
+    }, [formik.values.fillDetails, userData]);
+
+    const handleCheckboxChange = (e) => {
+        if(!user){
+            toast.error("Please login");
+            return
+          }
+        const isChecked = e.target.checked;
+        formik.setFieldValue('fillDetails', isChecked);
+        if (isChecked) {
+            refetch();
+        }
+    };
 
     return (
         <>
             <div className="absolute top-[60%] sm:top-[65%] md:top-[60%] lg:top-[60%] xl:top-[82%] 2xl:top-[90%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white py-4 px-6 rounded-lg shadow-lg w-11/12 sm:w-10/12 md:w-9/12 lg:w-8/12 xl:w-8/12 border-2 border-custom-opacity">
-                               
-                        <VehicleSelection  distance={distance} setDistance={setDistance}/>
-                   
+
+                <VehicleSelection distance={distance} setDistance={setDistance} />
+
                 <form onSubmit={formik.handleSubmit}>
                     <div className="w-full flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4 my-6">
                         <div className="w-full sm:flex-1">
@@ -278,6 +317,7 @@ const Booking = () => {
                                     onChange={formik.handleChange}
                                     onBlur={formik.handleBlur}
                                     className="flex-1 h-full outline-none"
+                                    disabled={formik.values.fillDetails}
                                 />
                             </div>
                             {formik.touched.phoneNumber && formik.errors.phoneNumber && (
@@ -292,6 +332,7 @@ const Booking = () => {
                                 onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
                                 className="w-full h-14 px-4 border border-gray-300 rounded-md outline-none focus:outline-none"
+                                disabled={formik.values.fillDetails} 
                             />
                             {formik.touched.name && formik.errors.name && (
                                 <p className="text-red-500 text-sm !mt-0">{formik.errors.name}</p>
@@ -306,6 +347,7 @@ const Booking = () => {
                                 onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
                                 className="w-full h-14 px-4 border border-gray-300 rounded-md outline-none focus:outline-none"
+                                disabled={formik.values.fillDetails} 
                             />
                             {formik.touched.email && formik.errors.email && (
                                 <p className="text-red-500 text-sm !mt-0 ">{formik.errors.email}</p>
@@ -318,7 +360,7 @@ const Booking = () => {
                                     type="checkbox"
                                     name="fillDetails"
                                     checked={formik.values.fillDetails}
-                                    onChange={formik.handleChange}
+                                    onChange={handleCheckboxChange}
                                     className="w-5 h-5 text-primary-yellow border-gray-300 rounded focus:ring-0 checked:bg-yellow-500"
                                 />
                                 <span className="text-primary-black">Fill with my details</span>

@@ -12,7 +12,9 @@ const authApi = createApi({
       }
       return headers;
     },
+    
   }),
+  tagTypes: ['user'],
   endpoints: (builder) => ({
     registerUser: builder.mutation({
       query: (newUser) => ({
@@ -32,12 +34,20 @@ const authApi = createApi({
         return { token: response };
       },
     }),
+    fetchCurrentUser:builder.query({
+      query: () => ({
+        url: '/current-user',
+        method: 'GET'
+    }),
+    providesTags: ['user'],
+    })
   }),
 });
 
 export const {
   useRegisterUserMutation,
   useLoginUserMutation,
+  useFetchCurrentUserQuery
 } = authApi;
 
 export default authApi;
