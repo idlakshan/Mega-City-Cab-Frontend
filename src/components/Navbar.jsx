@@ -31,6 +31,7 @@ const Navbar = () => {
   const adminDropDownMenus = [
     { label: "Dashboard", path: "/dashboard/admin" },
     { label: "Manage Vehicles", path: "/dashboard/manage-vehicles" },
+    { label: "View Users", path: "/dashboard/users" },
     { label: "Manage Drivers", path: "/dashboard/manage-drivers" },
     { label: "All Bookings", path: "/dashboard/manage-bookings" },
 

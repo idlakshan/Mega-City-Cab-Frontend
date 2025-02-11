@@ -67,7 +67,7 @@ const Booking = () => {
     const distance = useSelector((state) => state.distance.value);
     const { data: userData, refetch } = useFetchCurrentUserQuery();
       const { user } = useSelector((state) => state.auth);
-     console.log(user);
+    // console.log(user);
      
     // console.log(import.meta.env.VITE_OPENROUTESERVICE_API_KEY);
     // console.log(import.meta.env.VITE_OPEN_CAGE_API_KEY);
@@ -218,7 +218,7 @@ const Booking = () => {
 
        
         if (formik.values.fillDetails && userData) {
-            console.log("User Data ",userData);
+           // console.log("User Data ",userData);
             
             formik.setValues({
                 ...formik.values,
@@ -238,7 +238,7 @@ const Booking = () => {
 
     const handleCheckboxChange = (e) => {
         if(!user){
-            toast.error("Please login");
+            toast.error("You are not authorized to access");
             return
           }
         const isChecked = e.target.checked;
