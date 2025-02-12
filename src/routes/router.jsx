@@ -12,6 +12,7 @@ import AdminDashboard from '../pages/dashboard/AdminDashboard';
 import AdminDashboardMain from '../pages/dashboard/admin/dashboard/AdminDashboardMain';
 import ManageVehicle from '../pages/dashboard/admin/vehicle/ManageVehicle';
 import ManageDriver from '../pages/dashboard/admin/driver/ManageDriver';
+import AddVehicle from '../pages/dashboard/admin/vehicle/AddVehicle';
 const router = createBrowserRouter([
     {
         path: '/',
@@ -58,6 +59,10 @@ const router = createBrowserRouter([
             {
                 path:'admin',
                 element:<PrivateRoute role="ADMIN"><AdminDashboardMain/></PrivateRoute>
+            },
+            {
+                path:'add-vehicles',
+                element:<PrivateRoute role="ADMIN"><AddVehicle/></PrivateRoute>
             },
             {
                 path:'manage-vehicles',

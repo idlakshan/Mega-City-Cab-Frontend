@@ -6,8 +6,10 @@ const AdminDashboard = () => {
     const navItems = [
 
         { label: "Dashboard", path: "/dashboard/admin" },
+        { label: "Add Vehicles", path: "/dashboard/add-vehicles" },
         { label: "Manage Vehicles", path: "/dashboard/manage-vehicles" },
         { label: "View Users", path: "/dashboard/users" },
+        { label: "Add Drivers", path: "/dashboard/add-drivers" },
         { label: "Manage Drivers", path: "/dashboard/manage-drivers" },
         { label: "All Bookings", path: "/dashboard/manage-bookings" },
 
@@ -16,7 +18,7 @@ const AdminDashboard = () => {
     return (
         <>
             <div className="flex items-center justify-between mb-8">
-                <h1 className="text-2xl font-bold">Mega City Cabs</h1>
+                <Link to='/' className="text-2xl font-bold">Mega City Cabs</Link>
             </div>
             <nav>
                 <ul className="space-y-4">
