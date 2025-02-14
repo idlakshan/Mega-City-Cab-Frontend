@@ -11,11 +11,11 @@ function App() {
 
 
   return (
-    <>
+    <div className='!mb-[-25px]'>
     <Navbar/>
     <Outlet/>
-    <Footer/>
-    </>
+     <Footer/>
+    </div>
   )
 }
 

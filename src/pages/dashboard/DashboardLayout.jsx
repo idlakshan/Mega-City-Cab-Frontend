@@ -5,8 +5,8 @@ import Avatar from '../../../src/assets/avatar.png'
 
 const DashboardLayout = () => {
   return (
-    <div className=" bg-primary-light">
-      <aside className="fixed inset-y-0 left-0 w-64 bg-primary-black text-white p-6">
+    <div className="bg-primary-light !mb-[-25px]">
+      <aside className="fixed inset-y-0 left-0 w-64 bg-primary-black text-white p-6 ">
        <AdminDashboard/>
       </aside>
 
@@ -33,7 +33,7 @@ const DashboardLayout = () => {
         </header>
 
    
-        <main className="p-6">
+        <main className="p-6 ">
           <div className="bg-white rounded-lg shadow-md p-6">
            <Outlet/>
           </div>

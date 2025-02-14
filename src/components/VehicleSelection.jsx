@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useGetCategoryQuery } from '../redux/features/category/categoryApi';
 
-
 import cashIcon from '../assets/cash.png';
 import snowIcon from '../assets/snow.png';
 import passengerIcon from '../assets/passenger.png';
@@ -14,12 +13,12 @@ const VehicleSelection = () => {
   const [selectedCategory, setSelectedCategory] = useState('Budget');
   const distance = useSelector((state) => state.distance.value);
 
-  
   const { data: response, isLoading, error } = useGetCategoryQuery();
-  const categories = response?.categories || []; 
+  console.log(response)
+ 
+  const categories = response?.data?.categories || [];
 
   const handleCategoryClick = (category) => setSelectedCategory(category);
-
 
   const selectedCategoryDetails = categories.find((c) => c.name === selectedCategory) || null;
 
@@ -85,3 +84,5 @@ const VehicleSelection = () => {
 };
 
 export default VehicleSelection;
+
+

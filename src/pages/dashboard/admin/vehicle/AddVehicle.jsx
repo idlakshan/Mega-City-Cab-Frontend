@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { FaTimes, FaCar, FaList, FaIdBadge, FaImage, FaCheckCircle } from 'react-icons/fa';
+import { useGetCategoryNamesQuery } from '../../../../redux/features/category/categoryApi';
+import { useAddCarMutation } from '../../../../redux/features/vehicle/VehicleApi';
+import { toast } from 'react-toastify';
 
 const AddVehicle = () => {
   const [categories, setCategories] = useState([]);
@@ -10,19 +13,15 @@ const AddVehicle = () => {
     'Sabaragamuwa', 'Southern', 'Uva', 'Western'
   ];
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await fetch('/api/categories');
-        const data = await response.json();
-        setCategories(data);
-      } catch (error) {
-        console.error('Error fetching categories:', error);
-      }
-    };
+  const { data: response, isLoading, error: fetchError } = useGetCategoryNamesQuery();
+  const [addCar, { isLoading: isAdding, error: addError }] = useAddCarMutation();
+console.log(addError);
 
-    fetchCategories();
-  }, []);
+  useEffect(() => {
+    if (response && response.data && response.data.categories) {
+      setCategories(response.data.categories);
+    }
+  }, [response]);
 
   const formik = useFormik({
     initialValues: {
@@ -48,28 +47,28 @@ const AddVehicle = () => {
     }),
     onSubmit: async (values) => {
       const combinedCarNumber = `${values.province} ${values.carNumber}`;
-
+    
       const formData = new FormData();
       formData.append('categoryId', values.categoryId);
       formData.append('carName', values.carName);
       formData.append('carNumber', combinedCarNumber);
-      formData.append('status', values.status);
       formData.append('carImage', values.carImage);
-
+      formData.append('status', values.status);
+    
       try {
-        const response = await fetch('/api/cars', {
-          method: 'POST',
-          body: formData,
-        });
-
-        if (response.ok) {
-          alert('Car added successfully!');
+        const result = await addCar(formData).unwrap();
+        if (result) {
+          toast.success('Car added successfully!');
           formik.resetForm();
-        } else {
-          alert('Failed to add car.');
         }
       } catch (error) {
         console.error('Error adding car:', error);
+        if (error.status === 409) { 
+          toast.error('Car number already exists. Please use a different number.');
+        } else {
+          toast.error(`Failed to add car: ${error.data?.message || 'Unknown error'}`);
+          
+        }
       }
     },
   });
@@ -85,15 +84,22 @@ const AddVehicle = () => {
     formik.setFieldValue('carImage', null);
   };
 
+  if (isLoading) {
+    return <div>Loading categories...</div>;
+  }
+
+  if (fetchError) {
+    return <div>Error loading categories: {fetchError.message}</div>;
+  }
+
   return (
     <>
       <h1 className="text-3xl font-bold mb-8 text-center text-primary-black">
         Add New Vehicle
       </h1>
       <form onSubmit={formik.handleSubmit} className="flex gap-8">
-      
         <div className="w-1/2 space-y-6">
-       
+     
           <div>
             <label htmlFor="categoryId" className="block text-sm font-medium text-primary-black">
               Category
@@ -121,7 +127,7 @@ const AddVehicle = () => {
             ) : null}
           </div>
 
-       
+      
           <div>
             <label htmlFor="carName" className="block text-sm font-medium text-primary-black">
               Car Modal
@@ -144,13 +150,12 @@ const AddVehicle = () => {
             ) : null}
           </div>
 
-  
+     
           <div>
             <label htmlFor="province" className="block text-sm font-medium text-primary-black">
               Province & Car Number
             </label>
             <div className="flex gap-3">
-       
               <div className="relative flex-2">
                 <select
                   id="province"
@@ -170,7 +175,6 @@ const AddVehicle = () => {
                 <FaIdBadge className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               </div>
 
-       
               <div className="relative flex-1">
                 <input
                   type="text"
@@ -180,22 +184,22 @@ const AddVehicle = () => {
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   className="mt-1 block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-yellow focus:border-primary-yellow transition-all"
-                  placeholder="Enter Car Number (e.g., WP-1234)"
+                  placeholder="Enter Car Number (WP-1234)"
                 />
                 <FaIdBadge className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               </div>
             </div>
-
-      
-            {formik.touched.province && formik.errors.province ? (
-              <div className="text-red-500 text-sm mt-1">{formik.errors.province}</div>
-            ) : null}
-            {formik.touched.carNumber && formik.errors.carNumber ? (
-              <div className="text-red-500 text-sm mt-1">{formik.errors.carNumber}</div>
-            ) : null}
+            <div className='flex gap-x-[75px]'>
+              {formik.touched.province && formik.errors.province ? (
+                <div className="text-red-500 text-sm mt-1 flex">{formik.errors.province}</div>
+              ) : null}
+              {formik.touched.carNumber && formik.errors.carNumber ? (
+                <div className="text-red-500 text-sm mt-1 flex">{formik.errors.carNumber}</div>
+              ) : null}
+            </div>
           </div>
 
-      
+     
           <div>
             <label htmlFor="carImage" className="block text-sm font-medium text-primary-black">
               Car Image
@@ -222,19 +226,20 @@ const AddVehicle = () => {
             ) : null}
           </div>
 
-        
+       
           <div className="w-1/3">
             <button
               type="submit"
-              disabled={!formik.isValid || !formik.dirty}
-              className="w-full bg-primary-yellow text-primary-black py-2 px-4 rounded-md hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-primary-yellow font-semibold flex items-center justify-center gap-2"
+              disabled={!formik.isValid || !formik.dirty || isAdding}
+              className="w-full cursor-pointer bg-primary-yellow text-primary-black py-2 px-4 rounded-md hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-primary-yellow font-semibold flex items-center justify-center gap-2"
             >
               <FaCheckCircle />
-              <span>Add Vehicle</span>
+              <span>{isAdding ? 'Adding...' : 'Add Vehicle'}</span>
             </button>
           </div>
         </div>
 
+     
         <div className="w-1/2 flex justify-center items-center">
           {formik.values.carImage ? (
             <div className="relative">
