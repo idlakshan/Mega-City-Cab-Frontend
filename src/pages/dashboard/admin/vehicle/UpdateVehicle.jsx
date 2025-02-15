@@ -3,25 +3,59 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { FaTimes, FaCar, FaList, FaIdBadge, FaImage, FaCheckCircle } from 'react-icons/fa';
 import { useGetCategoryNamesQuery } from '../../../../redux/features/category/categoryApi';
-import { useAddCarMutation } from '../../../../redux/features/vehicle/VehicleApi';
+import { useAddCarMutation, useUpdateCarMutation, useGetCarByIdQuery } from '../../../../redux/features/vehicle/VehicleApi';
 import { toast } from 'react-toastify';
+import { useParams, useNavigate } from 'react-router-dom';
 
-const AddVehicle = () => {
+const UpdateVehicle = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
   const provinces = [
     'Central', 'Eastern', 'North Central', 'Northern', 'North Western',
     'Sabaragamuwa', 'Southern', 'Uva', 'Western'
   ];
 
-  const { data: response, isLoading, error: fetchError } = useGetCategoryNamesQuery();
+  const { data: response, isLoading: isCategoriesLoading, error: fetchError } = useGetCategoryNamesQuery();
+  const { data: vehicleData, isLoading: isVehicleLoading, error: vehicleError } = useGetCarByIdQuery(id);
   const [addCar, { isLoading: isAdding, error: addError }] = useAddCarMutation();
-console.log(addError);
+  const [updateCar, { isLoading: isUpdating, error: updateError }] = useUpdateCarMutation();
 
   useEffect(() => {
     if (response && response.data && response.data.categories) {
       setCategories(response.data.categories);
     }
   }, [response]);
+
+  useEffect(() => {
+    if (vehicleData) {
+      const { categoryId, carName, carNumber, carImage, status } = vehicleData.data;
+      const [province, number] = carNumber.split(' ');
+
+
+      formik.setValues({
+        categoryId,
+        carName,
+        province,
+        carNumber: number,
+        carImage: null,
+        status,
+      });
+
+
+      if (carImage) {
+        fetch(`http://localhost:8080/api/v1/uploads/vehicles/${carImage}`)
+          .then((response) => response.blob())
+          .then((blob) => {
+            const file = new File([blob], carImage, { type: blob.type });
+            formik.setFieldValue('carImage', file);
+          })
+          .catch((error) => {
+            console.error('Error fetching image:', error);
+          });
+      }
+    }
+  }, [vehicleData]);
 
   const formik = useFormik({
     initialValues: {
@@ -46,31 +80,47 @@ console.log(addError);
       status: Yup.string().required('Status is required'),
     }),
     onSubmit: async (values) => {
-      const combinedCarNumber = `${values.province} ${values.carNumber}`;
     
+      const combinedCarNumber = `${values.province} ${values.carNumber}`;
+
       const formData = new FormData();
+      formData.append('carId', id); 
       formData.append('categoryId', values.categoryId);
       formData.append('carName', values.carName);
-      formData.append('carNumber', combinedCarNumber);
+     // formData.append('province', values.province); 
+      formData.append('carNumber', combinedCarNumber); 
       formData.append('carImage', values.carImage);
       formData.append('status', values.status);
-    
+
+      for (let [key, value] of formData.entries()) {
+        console.log(key, value);
+      }
+
       try {
-        const result = await addCar(formData).unwrap();
-        if (result) {
-          toast.success('Car added successfully!');
-          formik.resetForm();
+        if (id) {
+          const result = await updateCar({ id, formData }).unwrap();
+          if (result) {
+            toast.success('Car updated successfully!');
+            navigate('/dashboard/manage-vehicles');
+          }
+        } else {
+          const result = await addCar(formData).unwrap();
+          if (result) {
+            toast.success('Car added successfully!');
+            formik.resetForm();
+          }
         }
       } catch (error) {
-        console.error('Error adding car:', error);
-        if (error.status === 409) { 
+        console.error('Error:', error);
+        if (error.status === 409) {
           toast.error('Car number already exists. Please use a different number.');
         } else {
-          toast.error(`Failed to add car: ${error.data?.message || 'Unknown error'}`);
-          
+          toast.error(`Failed: ${error.data?.message || 'Unknown error'}`);
         }
       }
     },
+
+
   });
 
   const handleImageChange = (e) => {
@@ -84,22 +134,21 @@ console.log(addError);
     formik.setFieldValue('carImage', null);
   };
 
-  if (isLoading) {
-    return <div>Loading categories...</div>;
+  if (isCategoriesLoading || isVehicleLoading) {
+    return <div>Loading...</div>;
   }
 
-  if (fetchError) {
-    return <div>Error loading categories: {fetchError.message}</div>;
+  if (fetchError || vehicleError) {
+    return <div>Error loading data: {fetchError?.message || vehicleError?.message}</div>;
   }
 
   return (
     <>
       <h1 className="text-3xl font-bold mb-8 text-center text-primary-black">
-        Add New Vehicle
+        {id ? 'Edit Vehicle' : 'Add New Vehicle'}
       </h1>
       <form onSubmit={formik.handleSubmit} className="flex gap-8">
         <div className="w-1/2 space-y-6">
-     
           <div>
             <label htmlFor="categoryId" className="block text-sm font-medium text-primary-black">
               Category
@@ -127,7 +176,6 @@ console.log(addError);
             ) : null}
           </div>
 
-      
           <div>
             <label htmlFor="carName" className="block text-sm font-medium text-primary-black">
               Car Modal
@@ -150,7 +198,6 @@ console.log(addError);
             ) : null}
           </div>
 
-     
           <div>
             <label htmlFor="province" className="block text-sm font-medium text-primary-black">
               Province & Car Number
@@ -199,7 +246,6 @@ console.log(addError);
             </div>
           </div>
 
-     
           <div>
             <label htmlFor="carImage" className="block text-sm font-medium text-primary-black">
               Car Image
@@ -226,21 +272,42 @@ console.log(addError);
             ) : null}
           </div>
 
-       
+          <div>
+            <label htmlFor="status" className="block text-sm font-medium text-primary-black">
+              Status
+            </label>
+            <div className="relative">
+              <select
+                id="status"
+                name="status"
+                value={formik.values.status}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                className="mt-1 block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-yellow focus:border-primary-yellow transition-all"
+              >
+                <option value="Available">Available</option>
+                <option value="Maintenance">Maintenance</option>
+              </select>
+              <FaList className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            </div>
+            {formik.touched.status && formik.errors.status ? (
+              <div className="text-red-500 text-sm mt-1">{formik.errors.status}</div>
+            ) : null}
+          </div>
+
           <div className="w-1/3">
             <button
               type="submit"
-              disabled={!formik.isValid || !formik.dirty || isAdding}
+              disabled={!formik.isValid || !formik.dirty || isAdding || isUpdating}
               className={` bg-primary-yellow flex items-center gap-2 text-primary-black py-2 px-4 rounded-md text-lg shadow-lg ${!formik.isValid || !formik.dirty ? "bg-gray-300 text-gray-500 cursor-not-allowed" : ""
-              }`}
+                }`}
             >
               <FaCheckCircle />
-              <span>{isAdding ? 'Adding...' : 'Add Vehicle'}</span>
+              <span>{isAdding || isUpdating ? 'Updating...' : 'Update Vehicle'}</span>
             </button>
           </div>
         </div>
 
-     
         <div className="w-1/2 flex justify-center items-center">
           {formik.values.carImage ? (
             <div className="relative">
@@ -266,4 +333,4 @@ console.log(addError);
   );
 };
 
-export default AddVehicle;
+export default UpdateVehicle;

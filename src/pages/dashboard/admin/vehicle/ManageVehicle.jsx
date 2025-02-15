@@ -1,29 +1,47 @@
 import React, { useState } from 'react';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import VehicleTable from '../../../../components/VehicleTable';
-import { useGetCategoryQuery } from '../../../../redux/features/category/categoryApi';
+import {useGetCategoryQuery,useUpdateCategoryPriceMutation, } from '../../../../redux/features/category/categoryApi';
 import { useDeleteCarMutation, useGetCarsQuery } from '../../../../redux/features/vehicle/VehicleApi';
 import CategoryCard from '../../../../components/CategoryCard';
+import { toast } from 'react-toastify';
 
 const ManageVehicle = () => {
-  const { data: categoriesResponse, isLoading: isCategoriesLoading, isError: isCategoriesError } = useGetCategoryQuery();
-  const { data: vehiclesResponse, isLoading: isVehiclesLoading, isError: isVehiclesError, refetch } = useGetCarsQuery();
+  const { data: categoriesResponse, isLoading: isCategoriesLoading, isError: isCategoriesError } =useGetCategoryQuery();
+  const { data: vehiclesResponse, isLoading: isVehiclesLoading, isError: isVehiclesError, refetch } =useGetCarsQuery();
   const [deleteCar] = useDeleteCarMutation();
-
+  const [updateCategoryPrice] = useUpdateCategoryPriceMutation(); 
   const [isCategoriesVisible, setIsCategoriesVisible] = useState(false);
 
   const handleDelete = async (carId) => {
+   // console.log(carId);
+  
     try {
       await deleteCar(carId).unwrap();
+      toast.success('The car has been successfully deleted!')
       refetch();
     } catch (error) {
+      toast.error('Failed to delete vehicle:', error)
       console.error('Failed to delete vehicle:', error);
     }
   };
 
-  const handleUpdatePrice = (categoryId, newPrice) => {
-    console.log(`Updating category ${categoryId} price to ${newPrice}`);
+  const handleUpdatePrice = async (categoryId, newPrice) => {
+    try {
   
+      const payload = {
+        id: parseInt(categoryId, 10), 
+        price: parseFloat(newPrice),
+      };
+  
+      //console.log('Sending payload:', payload); 
+      await updateCategoryPrice(payload).unwrap();
+      refetch(); 
+      toast.success('Category price updated successfully!')
+    } catch (error) {
+      toast.error('Failed to update category price:', error)
+      console.error('Failed to update category price:', error);
+    }
   };
 
   const toggleCategoriesVisibility = () => {
@@ -55,7 +73,9 @@ const ManageVehicle = () => {
         </div>
 
         <div
-          className={`overflow-hidden transition-all duration-300 ease-in-out ${isCategoriesVisible ? 'max-h-96' : 'max-h-0'}`}
+          className={`overflow-hidden transition-all duration-300 ease-in-out ${
+            isCategoriesVisible ? 'max-h-96' : 'max-h-0'
+          }`}
         >
           <CategoryCard
             categories={initialCategories}
@@ -64,7 +84,7 @@ const ManageVehicle = () => {
         </div>
       </div>
 
-      <h1 className="text-2xl font-bold mt-8 mb-6 text-primary-black">Vehicle List</h1>
+      <h1 className="text-2xl font-bold mt-8 mb-1 text-primary-black">Vehicle List</h1>
       <VehicleTable
         vehicles={vehicles}
         categories={initialCategories}

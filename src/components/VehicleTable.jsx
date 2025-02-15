@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { FaEdit } from 'react-icons/fa';
 import { AiOutlineSearch } from "react-icons/ai";
+import { Link } from 'react-router-dom';
 
 const VehicleTable = ({ vehicles, categories, handleDelete }) => {
 
@@ -37,7 +38,7 @@ const VehicleTable = ({ vehicles, categories, handleDelete }) => {
 
       <div className="p-3">
         <div className="overflow-x-auto">
-          <div className="max-h-96 overflow-y-auto"> 
+          <div className="max-h-96 overflow-y-auto">
             <table className="table-auto w-full">
               <thead className="text-xs font-semibold uppercase text-gray-400 bg-gray-50 sticky top-0">
                 <tr>
@@ -101,12 +102,12 @@ const VehicleTable = ({ vehicles, categories, handleDelete }) => {
                     </td>
                     <td className="p-2 whitespace-nowrap">
                       <div className="text-left">
-                        <a
-                          href={`/edit-vehicle/${vehicle.id}`}
+                        <Link
+                          to={`/dashboard/edit-vehicle/${vehicle.id}`}
                           className="text-blue-500 hover:text-blue-700 transition-colors"
                         >
                           <FaEdit className="inline-block" /> Edit
-                        </a>
+                        </Link>
                       </div>
                     </td>
                     <td className="p-2 whitespace-nowrap">

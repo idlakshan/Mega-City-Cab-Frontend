@@ -31,10 +31,18 @@ const categoryApi = createApi({
                  credentials: 'include'
             }),
             providesTags: ['category'],
-        })
+        }),
+        updateCategoryPrice: builder.mutation({
+            query: (body) => ({
+              url: '/category/update-category-price',
+              method: 'PUT',
+              body,
+            }),
+            invalidatesTags: ['category'], 
+          }),
     }),
    
 });
 
-export const { useGetCategoryQuery,useGetCategoryNamesQuery } = categoryApi;
+export const { useGetCategoryQuery,useGetCategoryNamesQuery,useUpdateCategoryPriceMutation } = categoryApi;
 export default categoryApi;

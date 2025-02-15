@@ -40,12 +40,12 @@ const vehicleApi = createApi({
         }),
         updateCar: builder.mutation({
             query: ({ id, formData }) => ({
-                url: `/vehicle/${id}`,
-                method: 'PUT',
-                body: formData,
+              url: `/vehicle/${id}`,
+              method: 'PUT',
+              body: formData,
             }),
             invalidatesTags: ['vehicle'],
-        }),
+          }),
         deleteCar: builder.mutation({
             query: (id) => ({
                 url: `/vehicle/${id}`,

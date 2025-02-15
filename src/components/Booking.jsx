@@ -425,7 +425,7 @@ const Booking = () => {
                                 <button
                                     type="submit"
                                     disabled={!formik.isValid || !formik.dirty}
-                                    className={`bg-primary-yellow text-primary-black py-2 px-4 rounded-md text-lg shadow-lg ${!formik.isValid || !formik.dirty ? "opacity-50 cursor-not-allowed" : ""
+                                    className={`bg-primary-yellow text-primary-black py-2 px-4 rounded-md text-lg shadow-lg ${!formik.isValid || !formik.dirty ? "bg-gray-300 text-gray-500 cursor-not-allowed" : ""
                                         }`}
                                 >
                                     Checkout
