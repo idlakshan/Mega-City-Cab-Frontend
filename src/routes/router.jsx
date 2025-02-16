@@ -14,6 +14,7 @@ import ManageVehicle from '../pages/dashboard/admin/vehicle/ManageVehicle';
 import ManageDriver from '../pages/dashboard/admin/driver/ManageDriver';
 import AddVehicle from '../pages/dashboard/admin/vehicle/AddVehicle';
 import UpdateVehicle from '../pages/dashboard/admin/vehicle/UpdateVehicle';
+import Checkout from '../pages/Checkout';
 const router = createBrowserRouter([
     {
         path: '/',
@@ -30,10 +31,15 @@ const router = createBrowserRouter([
             {
                 path: '/faqs',
                 element: <FAQ_Main />
-            }
+            },
+           
         ]
 
 
+    },
+    {
+        path: '/checkout',
+        element: <Checkout/>
     },
     {
         path: '/login',

@@ -14,6 +14,9 @@ import VehicleSelection from './VehicleSelection';
 import { useDispatch, useSelector } from 'react-redux';
 import { setDistance } from '../redux/features/vehicle/distanceSlice';
 import { useFetchCurrentUserQuery } from '../redux/features/auth/authApi';
+import { Link, useNavigate } from 'react-router-dom';
+import { setCheckoutData } from '../redux/features/checkout/checkout';
+
 
 const startIcon = new L.Icon({
     iconUrl: greenMarker,
@@ -64,6 +67,7 @@ const validationSchema = Yup.object({
 const Booking = () => {
 
     const dispatch = useDispatch();
+    const navigate = useNavigate(); 
     const distance = useSelector((state) => state.distance.value);
     const { data: userData, refetch } = useFetchCurrentUserQuery();
       const { user } = useSelector((state) => state.auth);
@@ -80,7 +84,7 @@ const Booking = () => {
     const [error, setError] = useState(null);
     const [debouncedPickLocation, setDebouncedPickLocation] = useState("");
     const [debouncedDropLocation, setDebouncedDropLocation] = useState("");
-
+    const selectedCategoryPrice = useSelector((state) => state.checkout.selectedCategoryPrice)
     // console.log(distance);
 
 
@@ -96,8 +100,15 @@ const Booking = () => {
         },
         validationSchema,
         onSubmit: (values) => {
-            console.log(values);
+            const checkoutData = {
+                ...values,
+                selectedCategoryPrice, 
+              };
 
+              console.log(checkoutData);
+              
+              dispatch(setCheckoutData(checkoutData)); 
+              navigate('/checkout');
         }
     });
 
@@ -185,7 +196,7 @@ const Booking = () => {
                 setStartCoords(start);
                 setEndCoords(end);
 
-                const response = await axios.get("https://api.openrouteservice.org/v2/directions/cycling-road", {
+                const response = await axios.get("https://api.openrouteservice.org/v2/directions/driving-car", {
                     params: {
                         api_key: import.meta.env.VITE_OPENROUTESERVICE_API_KEY,
                         start: `${start.lng},${start.lat}`,

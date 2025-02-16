@@ -1,26 +1,49 @@
-import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useGetCategoryQuery } from '../redux/features/category/categoryApi';
+import { setSelectedCategoryDetails, setSelectedCategoryPrice } from '../redux/features/checkout/checkout';
 
 import cashIcon from '../assets/cash.png';
 import snowIcon from '../assets/snow.png';
 import passengerIcon from '../assets/passenger.png';
 import baggageIcon from '../assets/baggage.png';
 
+
 const featureIcons = [cashIcon, snowIcon, passengerIcon, baggageIcon];
 
 const VehicleSelection = () => {
   const [selectedCategory, setSelectedCategory] = useState('Budget');
   const distance = useSelector((state) => state.distance.value);
+  const dispatch = useDispatch();
 
   const { data: response, isLoading, error } = useGetCategoryQuery();
-  console.log(response)
- 
   const categories = response?.data?.categories || [];
 
-  const handleCategoryClick = (category) => setSelectedCategory(category);
-
   const selectedCategoryDetails = categories.find((c) => c.name === selectedCategory) || null;
+
+  const calculateTotalPrice = () => {
+    if (!selectedCategoryDetails || isNaN(parseFloat(selectedCategoryDetails.price))) return 0;
+    return parseFloat(selectedCategoryDetails.price) * (distance || 1);
+  };
+
+  
+  useEffect(() => {
+    const totalPrice = calculateTotalPrice();
+    dispatch(setSelectedCategoryPrice(totalPrice.toFixed(2))); 
+  }, [selectedCategory, distance, dispatch, selectedCategoryDetails]);
+
+  const handleCategoryClick = (category) => {
+   // console.log('Selected Category:', category); 
+    setSelectedCategory(category.name);
+  
+
+    dispatch(
+      setSelectedCategoryDetails({
+        name: category.name,
+        icon: category.icon,
+      })
+    );
+  };
 
   return (
     <div className="w-full h-auto md:h-[150px] flex flex-col md:flex-row border-2 border-custom-opacity rounded-md">
@@ -36,12 +59,14 @@ const VehicleSelection = () => {
             return (
               <div
                 key={category.name}
-                onClick={() => handleCategoryClick(category.name)}
-                className={`border-2 border-primary-light shadow-md rounded-lg w-28 h-28 md:h-3/4 cursor-pointer transition-all duration-300 ${selectedCategory === category.name ? 'bg-[#FCC737] text-white' : 'bg-gray-50 hover:bg-gray-100'}`}
+                onClick={() => handleCategoryClick(category)}
+                className={`border-2 border-primary-light shadow-md rounded-lg w-28 h-28 md:h-3/4 cursor-pointer transition-all duration-300 ${
+                  selectedCategory === category.name ? 'bg-[#FCC737] text-white' : 'bg-gray-50 hover:bg-gray-100'
+                }`}
               >
-                <div className='flex items-center flex-col py-4'>
-                  <span className='text-sm md:text-lg font-semibold text-primary-black'>{category.name}</span>
-                  <img src={categoryIcon} alt={category.name} className='w-10 md:w-14' />
+                <div className="flex items-center flex-col py-4">
+                  <span className="text-sm md:text-lg font-semibold text-primary-black">{category.name}</span>
+                  <img src={categoryIcon} alt={category.name} className="w-10 md:w-14" />
                 </div>
               </div>
             );
@@ -57,9 +82,10 @@ const VehicleSelection = () => {
                 <h2 className="text-lg font-bold text-primary-black">{selectedCategoryDetails.title}</h2>
                 <div className="bg-primary-light w-32 h-8 rounded-md shadow-sm flex justify-center items-center mt-2 md:mt-0">
                   <span className="text-primary-black font-bold">
-                    LKR {(isNaN(parseFloat(selectedCategoryDetails.price)) || isNaN(parseFloat(distance))
+                    LKR{' '}
+                    {isNaN(parseFloat(selectedCategoryDetails.price)) || isNaN(parseFloat(distance))
                       ? '0.00'
-                      : (parseFloat(selectedCategoryDetails.price) * parseFloat(distance)).toFixed(2))}
+                      : (parseFloat(selectedCategoryDetails.price) * parseFloat(distance)).toFixed(2)}
                   </span>
                 </div>
               </div>
@@ -68,7 +94,7 @@ const VehicleSelection = () => {
                 {selectedCategoryDetails.features &&
                   JSON.parse(selectedCategoryDetails.features).map((feature, index) => (
                     <div key={index} className="flex items-center space-x-2">
-                      <img src={featureIcons[index]} alt="" className='w-4' />
+                      <img src={featureIcons[index]} alt="" className="w-4" />
                       <span className="text-primary-black text-sm">{feature}</span>
                     </div>
                   ))}
@@ -84,5 +110,3 @@ const VehicleSelection = () => {
 };
 
 export default VehicleSelection;
-
-
