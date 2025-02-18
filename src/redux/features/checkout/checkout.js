@@ -8,6 +8,9 @@ const checkoutSlice = createSlice({
     selectedCategoryPrice: 0,
     selectedCategoryName: "Budget", 
     selectedCategoryIcon: "mini.png",
+    selectedCategoryId: 1,
+    assignedCar: null, 
+    assignedDriver: null, 
   },
   reducers: {
     setCheckoutData: (state, action) => {
@@ -18,8 +21,16 @@ const checkoutSlice = createSlice({
     },
     setSelectedCategoryDetails: (state, action) => {
    //   console.log("Dispatching setSelectedCategoryDetails:", action.payload); 
+      state.selectedCategoryId = action.payload.id;
       state.selectedCategoryName = action.payload.name;
       state.selectedCategoryIcon = action.payload.icon; 
+
+    },
+    setAssignedCar: (state, action) => {
+      state.assignedCar = action.payload; 
+    },
+    setAssignedDriver: (state, action) => {
+      state.assignedDriver = action.payload; 
     },
     clearBookingData: (state) => {
       state.checkoutData = null;
@@ -35,6 +46,8 @@ export const {
   setSelectedCategoryPrice,
   setSelectedCategoryDetails,
   clearBookingData,
+  setAssignedCar,
+  setAssignedDriver,
 } = checkoutSlice.actions;
 
 export default checkoutSlice.reducer;

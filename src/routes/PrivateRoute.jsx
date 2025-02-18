@@ -7,7 +7,6 @@ const PrivateRoute = ({ children, role }) => {
 
     const {user}=useSelector((state)=>state.auth);
 
-    console.log(user);
 
     const location = useLocation();
 
@@ -16,13 +15,10 @@ const PrivateRoute = ({ children, role }) => {
         return <Navigate to="/login" state={{ from: location }} replace />
     }
     
-
-    if(role && user.role !== role){
- 
+    if (role && !role.includes(user.role)) { 
         toast.error("You are not authorized to access this Page!");
-         return <Navigate to="/login" state={{ from: location }} replace />
+        return <Navigate to="/login" state={{ from: location }} replace />
     }
-
     return children
 }
 

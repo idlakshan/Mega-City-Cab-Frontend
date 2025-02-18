@@ -27,20 +27,24 @@ const Signup = () => {
 
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
-      const response = await registerUser(values).unwrap();
-      toast.success("Signup successful! Please login.");
-      navigate("/login");
+      const response = await registerUser(values);
+      if (response.data.status === "success") {
+        toast.success(response.data.message);
+        navigate("/login");
+      } else {
+        toast.error(response.data.message);
+      }
     } catch (error) {
-      toast.error("Signup failed. Please try again.");
       console.error("Signup error:", error);
+      toast.error("Signup failed. Please try again.");
     } finally {
       setSubmitting(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-lg">
+    <div className=" bg-gray-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 !-mb-24">
+      <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-lg -mt-8">
         <h2 className="text-3xl font-bold text-center text-primary-black mb-8">Sign Up</h2>
         <Formik
           initialValues={{
@@ -55,7 +59,7 @@ const Signup = () => {
         >
           {({ isSubmitting, isValid, dirty }) => (
             <Form className="space-y-6">
-              {/* Name */}
+ 
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-primary-black">
                   Name
@@ -70,7 +74,7 @@ const Signup = () => {
                 <ErrorMessage name="name" component="p" className="text-red-500 text-sm mt-1" />
               </div>
 
-              {/* Phone */}
+             
               <div>
                 <label htmlFor="phone" className="block text-sm font-medium text-primary-black">
                   Phone
@@ -85,7 +89,7 @@ const Signup = () => {
                 <ErrorMessage name="phone" component="p" className="text-red-500 text-sm mt-1" />
               </div>
 
-              {/* NIC */}
+       
               <div>
                 <label htmlFor="nic" className="block text-sm font-medium text-primary-black">
                   NIC
@@ -100,7 +104,7 @@ const Signup = () => {
                 <ErrorMessage name="nic" component="p" className="text-red-500 text-sm mt-1" />
               </div>
 
-              {/* Email */}
+            
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-primary-black">
                   Email
@@ -115,7 +119,7 @@ const Signup = () => {
                 <ErrorMessage name="email" component="p" className="text-red-500 text-sm mt-1" />
               </div>
 
-              {/* Password */}
+         
               <div>
                 <label htmlFor="password" className="block text-sm font-medium text-primary-black">
                   Password
@@ -130,7 +134,7 @@ const Signup = () => {
                 <ErrorMessage name="password" component="p" className="text-red-500 text-sm mt-1" />
               </div>
 
-              {/* Submit Button */}
+            
               <div>
                 <button
                   type="submit"
@@ -145,7 +149,7 @@ const Signup = () => {
                 </button>
               </div>
 
-              {/* Login Link */}
+     
               <div className="text-center">
                 <p className="text-gray-600">
                   Already have an account?{" "}

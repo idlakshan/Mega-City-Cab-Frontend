@@ -15,7 +15,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setDistance } from '../redux/features/vehicle/distanceSlice';
 import { useFetchCurrentUserQuery } from '../redux/features/auth/authApi';
 import { Link, useNavigate } from 'react-router-dom';
-import { setCheckoutData } from '../redux/features/checkout/checkout';
+import { setAssignedCar, setAssignedDriver, setCheckoutData } from '../redux/features/checkout/checkout';
 
 
 const startIcon = new L.Icon({
@@ -67,12 +67,12 @@ const validationSchema = Yup.object({
 const Booking = () => {
 
     const dispatch = useDispatch();
-    const navigate = useNavigate(); 
+    const navigate = useNavigate();
     const distance = useSelector((state) => state.distance.value);
     const { data: userData, refetch } = useFetchCurrentUserQuery();
-      const { user } = useSelector((state) => state.auth);
+    const { user } = useSelector((state) => state.auth);
     // console.log(user);
-     
+
     // console.log(import.meta.env.VITE_OPENROUTESERVICE_API_KEY);
     // console.log(import.meta.env.VITE_OPEN_CAGE_API_KEY);
     const [startCoords, setStartCoords] = useState(null);
@@ -84,7 +84,9 @@ const Booking = () => {
     const [error, setError] = useState(null);
     const [debouncedPickLocation, setDebouncedPickLocation] = useState("");
     const [debouncedDropLocation, setDebouncedDropLocation] = useState("");
-    const selectedCategoryPrice = useSelector((state) => state.checkout.selectedCategoryPrice)
+    const selectedCategoryPrice = useSelector((state) => state.checkout.selectedCategoryPrice);
+    const selectedCategoryid = useSelector((state) => state.checkout.selectedCategoryId)
+
     // console.log(distance);
 
 
@@ -99,17 +101,48 @@ const Booking = () => {
             fillDetails: false,
         },
         validationSchema,
-        onSubmit: (values) => {
+        onSubmit: async (values) => {
+            const token = localStorage.getItem("token");
+
+            if (!token) {
+                toast.error("Please login to continue!");
+                return;
+            }
+
             const checkoutData = {
                 ...values,
-                selectedCategoryPrice, 
-              };
+                selectedCategoryPrice,
+            };
 
-              console.log(checkoutData);
-              
-              dispatch(setCheckoutData(checkoutData)); 
-              navigate('/checkout');
+            console.log(checkoutData);
+
+            dispatch(setCheckoutData(checkoutData));
+
+            try {
+                const response = await axios.post(
+                    'http://localhost:8080/api/v1/booking/',
+                    { categoryId: selectedCategoryid },
+                    {
+                        headers: { Authorization: `Bearer ${token}` }
+                    }
+                );
+
+                if (response.data.status === 200) {
+                    const { car, driver } = response.data.data;
+
+                    // Store assigned car and driver in Redux
+                    dispatch(setAssignedCar(car));
+                    dispatch(setAssignedDriver(driver));
+
+                    navigate('/checkout');
+                }
+            } catch (error) {
+                toast.error(error.response?.data?.message || "An error occurred during booking");
+                console.error("Error during booking:", error);
+            }
         }
+
+
     });
 
     useEffect(() => {
@@ -227,10 +260,10 @@ const Booking = () => {
 
     useEffect(() => {
 
-       
+
         if (formik.values.fillDetails && userData) {
-           // console.log("User Data ",userData);
-            
+            // console.log("User Data ",userData);
+
             formik.setValues({
                 ...formik.values,
                 phoneNumber: userData.phone,
@@ -248,10 +281,10 @@ const Booking = () => {
     }, [formik.values.fillDetails, userData]);
 
     const handleCheckboxChange = (e) => {
-        if(!user){
+        if (!user) {
             toast.error("You are not authorized to access");
             return
-          }
+        }
         const isChecked = e.target.checked;
         formik.setFieldValue('fillDetails', isChecked);
         if (isChecked) {
@@ -343,7 +376,7 @@ const Booking = () => {
                                 onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
                                 className="w-full h-14 px-4 border border-gray-300 rounded-md outline-none focus:outline-none"
-                                disabled={formik.values.fillDetails} 
+                                disabled={formik.values.fillDetails}
                             />
                             {formik.touched.name && formik.errors.name && (
                                 <p className="text-red-500 text-sm !mt-0">{formik.errors.name}</p>
@@ -358,7 +391,7 @@ const Booking = () => {
                                 onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
                                 className="w-full h-14 px-4 border border-gray-300 rounded-md outline-none focus:outline-none"
-                                disabled={formik.values.fillDetails} 
+                                disabled={formik.values.fillDetails}
                             />
                             {formik.touched.email && formik.errors.email && (
                                 <p className="text-red-500 text-sm !mt-0 ">{formik.errors.email}</p>

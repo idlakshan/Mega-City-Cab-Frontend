@@ -21,6 +21,9 @@ const authApi = createApi({
         url: "/signup",
         method: "POST",
         body: newUser,
+        headers: {
+          "Content-Type": "application/json",
+        },
       }),
     }),
     loginUser: builder.mutation({

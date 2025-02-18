@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { FiCalendar, FiMapPin } from 'react-icons/fi'; 
+import { FiCalendar, FiMapPin } from 'react-icons/fi';
 
 import { useNavigate } from 'react-router-dom';
 
@@ -9,10 +9,17 @@ function Checkout() {
   const selectedCategoryPrice = useSelector((state) => state.checkout.selectedCategoryPrice);
   const selectedCategoryName = useSelector((state) => state.checkout.selectedCategoryName);
   const selectedCategoryIcon = useSelector((state) => state.checkout.selectedCategoryIcon);
+  const selectedCategoryId = useSelector((state) => state.checkout.selectedCategoryId);
+  const assignedCar = useSelector((state) => state.checkout.assignedCar);
+  const assignedDriver = useSelector((state) => state.checkout.assignedDriver);
   const navigate = useNavigate();
+  const [showCarImage, setShowCarImage] = useState(false);
+  //console.log(assignedCar);
+  console.log('Selected Category Name:', selectedCategoryName);
+  console.log('Selected Category Icon:', selectedCategoryIcon);
 
-  // console.log('Selected Category Name:', selectedCategoryName);
-  //console.log('Selected Category Icon:', selectedCategoryIcon);
+  console.log(selectedCategoryId);
+
 
 
   const totalPrice = selectedCategoryPrice ? (selectedCategoryPrice * 0.05).toFixed(2) : 0;
@@ -55,7 +62,17 @@ function Checkout() {
                   />
                   <div>
                     <p className="text-md font-medium text-gray-600">{selectedCategoryName}</p>
-                    {/* <p className="text-sm text-primary-black">Suzuki Alto</p> */}
+              
+                    {assignedCar && (
+                      <>
+                        <p className="text-md font-semibold text-primary-black">{assignedCar.carName}</p>
+                        <button
+                          onClick={() => setShowCarImage(true)}
+                          className="text-blue-500 text-sm underline">
+                          View Car Image
+                        </button>
+                      </>
+                    )}
                   </div>
                 </div>
                 <div className="flex items-center">
@@ -71,7 +88,7 @@ function Checkout() {
                   </div>
                 </div>
               </div>
-              <div className="flex flex-col space-y-4">
+              <div className="flex flex-col space-y-4 pt-5">
                 <div className="flex items-center">
                   <FiMapPin className="h-6 w-6 text-[#615E5E] mr-3" />
 
@@ -103,20 +120,20 @@ function Checkout() {
             </h2>
             <div className="bg-white rounded-lg p-5 border border-custom-opacity">
               <div className='flex justify-between px-5 mr-0'>
-              <div className="mb-2">
-                <p className="text-sm font-medium text-[#B6B1B1]">Name</p>
-                <p className="text-sm text-[#615E5E]">
-                  {name || 'Not available'}
-                </p>
+                <div className="mb-2">
+                  <p className="text-sm font-medium text-[#B6B1B1]">Name</p>
+                  <p className="text-sm text-[#615E5E]">
+                    {name || 'Not available'}
+                  </p>
+                </div>
+                <div className="mb-2">
+                  <p className="text-sm font-medium text-[#B6B1B1]">Email</p>
+                  <p className="text-sm text-[#615E5E]">
+                    {email || 'Not available'}
+                  </p>
+                </div>
               </div>
-              <div className="mb-2">
-                <p className="text-sm font-medium text-[#B6B1B1]">Email</p>
-                <p className="text-sm text-[#615E5E]">
-                  {email || 'Not available'}
-                </p>
-              </div>
-              </div>
-            
+
               <div className='pt-2 pl-5'>
                 <p className="text-sm font-medium text-[#B6B1B1]">
                   Mobile Number
@@ -164,6 +181,25 @@ function Checkout() {
             </button>
           </div>
         </div>
+
+        {showCarImage && assignedCar && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+            <div className="bg-white p-6 rounded-lg max-w-sm w-full">
+              <h3 className="text-lg font-semibold">Car Preview</h3>
+
+
+              <img
+                src={`http://localhost:8080/api/v1/uploads/vehicles/${assignedCar.carImage}`}
+                alt={assignedCar.carName}
+                className="w-full h-auto my-4"
+              />
+              <button onClick={() => setShowCarImage(false)} className="bg-primary-black text-white px-4 py-2 rounded">
+                Close
+              </button>
+            </div>
+          </div>
+        )}
+
       </div>
     </>
   );

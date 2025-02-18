@@ -39,6 +39,7 @@ const VehicleSelection = () => {
 
     dispatch(
       setSelectedCategoryDetails({
+        id:category.id,
         name: category.name,
         icon: category.icon,
       })

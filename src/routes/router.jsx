@@ -15,6 +15,9 @@ import ManageDriver from '../pages/dashboard/admin/driver/ManageDriver';
 import AddVehicle from '../pages/dashboard/admin/vehicle/AddVehicle';
 import UpdateVehicle from '../pages/dashboard/admin/vehicle/UpdateVehicle';
 import Checkout from '../pages/Checkout';
+import AddDriver from '../pages/dashboard/admin/driver/AddDriver';
+import UpdateDriver from '../pages/dashboard/admin/driver/UpdateDriver';
+import Success from '../pages/BookingSuccess';
 const router = createBrowserRouter([
     {
         path: '/',
@@ -39,8 +42,14 @@ const router = createBrowserRouter([
     },
     {
         path: '/checkout',
-        element: <Checkout/>
+        element: <PrivateRoute role={["ADMIN", "CUSTOMER"]}><Checkout/></PrivateRoute>
     },
+
+    {
+        path: '/success',
+        element: <PrivateRoute role={["ADMIN", "CUSTOMER"]}><Success/></PrivateRoute>
+    },
+    
     {
         path: '/login',
         element: <Login />
@@ -79,10 +88,18 @@ const router = createBrowserRouter([
                 path:'edit-vehicle/:id',
                 element:<PrivateRoute role="ADMIN"><UpdateVehicle/></PrivateRoute>
             },
+            {
+                path:'add-drivers',
+                element:<PrivateRoute role="ADMIN"><AddDriver/></PrivateRoute>
+            },
             
             {
                 path:'manage-drivers',
                 element:<PrivateRoute role="ADMIN"><ManageDriver/></PrivateRoute>
+            },
+            {
+                path:'edit-driver/:id',
+                element:<PrivateRoute role="ADMIN"><UpdateDriver/></PrivateRoute>
             },
            
            
