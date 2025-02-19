@@ -12,9 +12,8 @@ const authApi = createApi({
       }
       return headers;
     },
-    
   }),
-  tagTypes: ['user'],
+  tagTypes: ["user"],
   endpoints: (builder) => ({
     registerUser: builder.mutation({
       query: (newUser) => ({
@@ -25,7 +24,9 @@ const authApi = createApi({
           "Content-Type": "application/json",
         },
       }),
+      invalidatesTags: ["user"], 
     }),
+
     loginUser: builder.mutation({
       query: (credentials) => ({
         url: "/login",
@@ -37,20 +38,40 @@ const authApi = createApi({
         return { token: response };
       },
     }),
-    fetchCurrentUser:builder.query({
+
+    fetchCurrentUser: builder.query({
       query: () => ({
-        url: '/current-user',
-        method: 'GET'
+        url: "/current-user",
+        method: "GET",
+      }),
+      providesTags: ["user"],
     }),
-    providesTags: ['user'],
-    })
+
+    fetchAllUsers: builder.query({
+      query: () => ({
+        url: "/all-users",
+        method: "GET",
+      }),
+      providesTags: ["user"], 
+    }),
+
+    deleteUser: builder.mutation({
+      query: (id) => ({
+        url: `/delete/${id}`,
+        method: "DELETE",
+        credentials: "include",
+      }),
+      invalidatesTags: ["user"], 
+    }),
   }),
 });
 
 export const {
   useRegisterUserMutation,
   useLoginUserMutation,
-  useFetchCurrentUserQuery
+  useFetchCurrentUserQuery,
+  useFetchAllUsersQuery,
+  useDeleteUserMutation,
 } = authApi;
 
 export default authApi;

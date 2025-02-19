@@ -3,6 +3,8 @@ import { useSelector } from 'react-redux';
 import { FiCalendar, FiMapPin } from 'react-icons/fi';
 
 import { useNavigate } from 'react-router-dom';
+import { loadStripe } from '@stripe/stripe-js';
+import { toast } from 'sonner';
 
 function Checkout() {
   const checkoutData = useSelector((state) => state.checkout.checkoutData);
@@ -22,7 +24,8 @@ function Checkout() {
 
 
 
-  const totalPrice = selectedCategoryPrice ? (selectedCategoryPrice * 0.05).toFixed(2) : 0;
+  const taxPrice = selectedCategoryPrice ? (selectedCategoryPrice * 0.05).toFixed(2) : 0;
+  const totalPrice=(parseFloat(selectedCategoryPrice) + parseFloat(taxPrice)).toFixed(2);
 
 
   const {
@@ -33,6 +36,68 @@ function Checkout() {
     name = '',
     email = '',
   } = checkoutData || {};
+
+
+  const handleConfirmRide = async () => {
+    try {
+      const stripe = await loadStripe(import.meta.env.VITE_STRIPE_PK);
+  
+      // Retrieve user details from local storage
+      const storedUser = localStorage.getItem('user');
+      if (!storedUser) {
+        throw new Error('User not found. Please log in.');
+      }
+  
+      const { userId, role } = JSON.parse(storedUser);
+      
+      const token = localStorage.getItem('token'); 
+      if (!token) {
+        throw new Error('Authentication token not found. Please log in.');
+      }
+  
+      const response = await fetch('http://localhost:8080/api/v1/create-checkout-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: new URLSearchParams({
+          amount: totalPrice,
+          currency: 'LKR',
+          successUrl: 'http://localhost:5173/success',
+          cancelUrl: 'http://localhost:5173/cancel',
+          userId: userId,
+          carId: assignedCar.carId,
+          driverId: assignedDriver.driverId,
+          pickupLocation: pickLocation,
+          dropLocation: dropLocation,
+          bookingDateTime: dateTime,
+          customerName: name,
+          customerEmail: email,
+          customerPhone: phoneNumber,
+        }),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to create checkout session');
+      }
+  
+      const session = await response.json();
+  
+      const result = await stripe.redirectToCheckout({
+        sessionId: session.id,
+      });
+  
+      if (result.error) {
+        throw new Error(result.error.message);
+      }
+  
+    } catch (error) {
+      console.error('Checkout Error:', error);
+      toast.error(`Checkout failed: ${error.message}`);
+    }
+  };
+  
 
   return (
     <>
@@ -158,13 +223,13 @@ function Checkout() {
             </div>
             <div className="flex justify-between mb-2">
               <p className="text-sm font-medium text-[#B6B1B1]">Tax (5%)</p>
-              <p className="text-sm text-primary-black">LKR {totalPrice}</p>
+              <p className="text-sm text-primary-black">LKR {taxPrice}</p>
             </div>
             <div className="flex justify-between pt-3">
               <p className="text-sm font-bold text-primary-black">
                 Your Payment
               </p>
-              <p className="text-sm font-bold text-primary-black">LKR {parseFloat(selectedCategoryPrice) + parseFloat(totalPrice)}</p>
+              <p className="text-sm font-bold text-primary-black">LKR {totalPrice}</p>
             </div>
           </div>
 
@@ -176,7 +241,9 @@ function Checkout() {
             >
               Back
             </button>
-            <button className="bg-primary-yellow text-primary-black font-semibold py-3 px-6 rounded">
+            <button 
+             onClick={handleConfirmRide}
+            className="bg-primary-yellow text-primary-black font-semibold py-3 px-6 rounded">
               Confirm Ride
             </button>
           </div>

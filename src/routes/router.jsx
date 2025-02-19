@@ -18,6 +18,7 @@ import Checkout from '../pages/Checkout';
 import AddDriver from '../pages/dashboard/admin/driver/AddDriver';
 import UpdateDriver from '../pages/dashboard/admin/driver/UpdateDriver';
 import Success from '../pages/BookingSuccess';
+import ManageUsers from '../pages/dashboard/admin/user/ManageUser';
 const router = createBrowserRouter([
     {
         path: '/',
@@ -87,6 +88,10 @@ const router = createBrowserRouter([
             {
                 path:'edit-vehicle/:id',
                 element:<PrivateRoute role="ADMIN"><UpdateVehicle/></PrivateRoute>
+            },
+            {
+                path:'view-users',
+                element:<PrivateRoute role="ADMIN"><ManageUsers/></PrivateRoute>
             },
             {
                 path:'add-drivers',

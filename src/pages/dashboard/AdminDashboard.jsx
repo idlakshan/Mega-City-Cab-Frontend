@@ -9,7 +9,7 @@ const AdminDashboard = () => {
         { label: "Dashboard", path: "/dashboard/admin", icon: <FaTachometerAlt /> },
         { label: "Add Vehicles", path: "/dashboard/add-vehicles", icon: <FaCar /> },
         { label: "Manage Vehicles", path: "/dashboard/manage-vehicles", icon: <FaCar /> },
-        { label: "View Users", path: "/dashboard/users", icon: <FaUsers /> },
+        { label: "View Users", path: "/dashboard/view-users", icon: <FaUsers /> },
         { label: "Add Drivers", path: "/dashboard/add-drivers", icon: <FaUserPlus /> },
         { label: "Manage Drivers", path: "/dashboard/manage-drivers", icon: <FaUserPlus /> },
         { label: "All Bookings", path: "/dashboard/manage-bookings", icon: <FaListAlt /> },
