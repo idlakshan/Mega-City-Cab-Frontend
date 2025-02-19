@@ -7,6 +7,7 @@ import vehicleApi from './features/vehicle/VehicleApi';
 import bookingReducer from './features/booking/bookingSlice';
 import checkoutReducer from './features/checkout/checkout'
 import driverApi from './features/driver/driverApi';
+import bookingApi from './features/booking/bookingApi';
 
 export const store = configureStore({
   reducer: {
@@ -18,7 +19,8 @@ export const store = configureStore({
     [categoryApi.reducerPath]: categoryApi.reducer, 
     [vehicleApi.reducerPath]: vehicleApi.reducer, 
     [driverApi.reducerPath]: driverApi.reducer, 
+    [bookingApi.reducerPath]: bookingApi.reducer, 
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(authApi.middleware,categoryApi.middleware,vehicleApi.middleware,driverApi.middleware), 
+    getDefaultMiddleware().concat(authApi.middleware,categoryApi.middleware,vehicleApi.middleware,driverApi.middleware,bookingApi.middleware), 
 });
