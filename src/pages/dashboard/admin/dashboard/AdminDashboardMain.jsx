@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Bar, Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -25,8 +25,13 @@ ChartJS.register(
 );
 
 const AdminDashboardMain = () => {
-  const { data: statsData, error: statsError, isLoading: statsLoading } = useGetBookingsCountQuery();
-  const { data: last7DaysData, error: last7DaysError, isLoading: last7DaysLoading } = useGetLast7DaysDataQuery();
+  const { data: statsData, error: statsError, isLoading: statsLoading,refetch } = useGetBookingsCountQuery();
+  const { data: last7DaysData, error: last7DaysError, isLoading: last7DaysLoading,refetch:dataRefetch } = useGetLast7DaysDataQuery();
+
+   useEffect(() => {
+      refetch();
+      dataRefetch()
+    }, [refetch,dataRefetch]);
 
   if (statsLoading || last7DaysLoading) return <p>Loading...</p>;
   if (statsError || last7DaysError) return <p>Error fetching data</p>;
@@ -92,7 +97,7 @@ const AdminDashboardMain = () => {
                 },
                 title: {
                   display: true,
-                  text: 'Monthly Payments in LKR',
+                  text: 'Daily Payments in LKR',
                 },
               },
             }}

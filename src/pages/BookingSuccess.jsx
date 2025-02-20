@@ -1,14 +1,20 @@
 import React, { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 function Success() {
   const navigate = useNavigate();
+  // const assignedCar = useSelector((state) => state.checkout.assignedCar);
+  // const assignedDriver = useSelector((state) => state.checkout.assignedDriver);
+
+  // console.log(assignedCar);
+  
 
   useEffect(() => {
     // Redirect to home or any other page after a few seconds
     const timer = setTimeout(() => {
       navigate('/');
-    }, 5000);
+    }, 3000);
 
     return () => clearTimeout(timer);
   }, [navigate]);

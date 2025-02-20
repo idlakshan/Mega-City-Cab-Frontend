@@ -14,7 +14,7 @@ const DriverTable = ({ drivers, handleDelete }) => {
     driver.status.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
- // console.log(drivers)
+  // console.log(drivers)
 
   return (
     <section>
@@ -105,24 +105,36 @@ const DriverTable = ({ drivers, handleDelete }) => {
                     </td>
                     <td className="p-2 whitespace-nowrap">
                       <div className="text-left">
-                        <Link
-                          to={`/dashboard/edit-driver/${driver.driverId}`}
-                          className="text-blue-500 hover:text-blue-700 transition-colors"
-                        >
-                          <FaEdit className="inline-block" /> Edit
-                        </Link>
+                        {driver.status === 'Assigned' ? (
+                          <span className="text-gray-400 cursor-not-allowed">
+                            <FaEdit className="inline-block" /> Edit
+                          </span>
+                        ) : (
+                          <Link
+                            to={`/dashboard/edit-driver/${driver.driverId}`}
+                            className="text-blue-500 hover:text-blue-700 transition-colors"
+                          >
+                            <FaEdit className="inline-block" /> Edit
+                          </Link>
+                        )}
                       </div>
                     </td>
+
                     <td className="p-2 whitespace-nowrap">
                       <div className="text-left">
                         <button
-                          onClick={() => handleDelete(driver.driverId)}
-                          className="text-red-500 hover:text-red-700 transition-colors"
+                          onClick={() => driver.status !== 'Assigned' && handleDelete(driver.driverId)}
+                          disabled={driver.status === 'Assigned'}
+                          className={`transition-colors ${driver.status === 'Assigned'
+                              ? "text-gray-400 cursor-not-allowed" 
+                              : "text-red-500 hover:text-red-700"   
+                            }`}
                         >
                           Delete
                         </button>
                       </div>
                     </td>
+
                   </tr>
                 ))}
               </tbody>

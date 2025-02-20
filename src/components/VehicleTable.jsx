@@ -91,7 +91,7 @@ const VehicleTable = ({ vehicles, categories, handleDelete }) => {
                         <span
                           className={`px-2 py-1 rounded-full text-sm ${vehicle.status === 'Available'
                             ? 'bg-green-100 text-green-800'
-                            : vehicle.status === 'Maintaince'
+                            : vehicle.status === 'Booked'
                               ? 'bg-yellow-100 text-yellow-800'
                               : 'bg-red-100 text-red-800'
                             }`}
@@ -102,24 +102,36 @@ const VehicleTable = ({ vehicles, categories, handleDelete }) => {
                     </td>
                     <td className="p-2 whitespace-nowrap">
                       <div className="text-left">
-                        <Link
-                          to={`/dashboard/edit-vehicle/${vehicle.id}`}
-                          className="text-blue-500 hover:text-blue-700 transition-colors"
-                        >
-                          <FaEdit className="inline-block" /> Edit
-                        </Link>
+                        {vehicle.status === 'Booked' ? (
+                          <span className="text-gray-400 cursor-not-allowed">
+                            <FaEdit className="inline-block" /> Edit
+                          </span>
+                        ) : (
+                          <Link
+                            to={`/dashboard/edit-vehicle/${vehicle.id}`}
+                            className="text-blue-500 hover:text-blue-700 transition-colors"
+                          >
+                            <FaEdit className="inline-block" /> Edit
+                          </Link>
+                        )}
                       </div>
+
                     </td>
                     <td className="p-2 whitespace-nowrap">
                       <div className="text-left">
                         <button
-                          onClick={() => handleDelete(vehicle.id)}
-                          className="text-red-500 hover:text-red-700 transition-colors"
+                          onClick={() => vehicle.status !== 'Booked' && handleDelete(vehicle.id)}
+                          disabled={vehicle.status === 'Booked'}
+                          className={`transition-colors ${vehicle.status === 'Booked'
+                              ? "text-gray-400 cursor-not-allowed" 
+                              : "text-red-500 hover:text-red-700"   
+                            }`}
                         >
                           Delete
                         </button>
                       </div>
                     </td>
+
                   </tr>
                 ))}
               </tbody>

@@ -19,6 +19,8 @@ import AddDriver from '../pages/dashboard/admin/driver/AddDriver';
 import UpdateDriver from '../pages/dashboard/admin/driver/UpdateDriver';
 import Success from '../pages/BookingSuccess';
 import ManageUsers from '../pages/dashboard/admin/user/ManageUser';
+import BookingTable from '../components/BookingTable';
+import OngoingBookingsTable from '../components/OngoingBookingTable';
 const router = createBrowserRouter([
     {
         path: '/',
@@ -76,6 +78,14 @@ const router = createBrowserRouter([
             {
                 path:'admin',
                 element:<PrivateRoute role="ADMIN"><AdminDashboardMain/></PrivateRoute>
+            },
+            {
+                path:'ongoing-bookings',
+                element:<PrivateRoute role="ADMIN"><OngoingBookingsTable/></PrivateRoute>
+            },
+            {
+                path:'all-bookings',
+                element:<PrivateRoute role="ADMIN"><BookingTable/></PrivateRoute>
             },
             {
                 path:'add-vehicles',

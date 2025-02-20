@@ -7,12 +7,14 @@ const AdminDashboard = () => {
 
     const navItems = [
         { label: "Dashboard", path: "/dashboard/admin", icon: <FaTachometerAlt /> },
+        { label: "Ongoing Bookings", path: "/dashboard/ongoing-bookings", icon: <FaListAlt /> },
+        { label: "All Bookings", path: "/dashboard/all-bookings", icon: <FaListAlt /> },
         { label: "Add Vehicles", path: "/dashboard/add-vehicles", icon: <FaCar /> },
         { label: "Manage Vehicles", path: "/dashboard/manage-vehicles", icon: <FaCar /> },
         { label: "View Users", path: "/dashboard/view-users", icon: <FaUsers /> },
         { label: "Add Drivers", path: "/dashboard/add-drivers", icon: <FaUserPlus /> },
         { label: "Manage Drivers", path: "/dashboard/manage-drivers", icon: <FaUserPlus /> },
-        { label: "All Bookings", path: "/dashboard/manage-bookings", icon: <FaListAlt /> },
+       
     ];
 
     const handleLogout = async () => {
@@ -41,18 +43,18 @@ const AdminDashboard = () => {
                                 to={item.path}
                                 className="flex items-center p-2 rounded-lg hover:bg-primary-yellow hover:text-primary-black transition-all duration-300"
                             >
-                                {item.icon} {/* Render the icon */}
+                                {item.icon}
                                 <span className="ml-2">{item.label}</span>
                             </NavLink>
                         </li>
                     ))}
                 </ul>
-                {/* Logout Button */}
+        
                 <button
                     onClick={handleLogout}
                     className="w-full flex items-center mt-16 p-2 rounded-lg bg-primary-yellow text-primary-black "
                 >
-                    <FaSignOutAlt /> {/* Logout icon */}
+                    <FaSignOutAlt /> 
                     <span className="ml-2">Logout</span>
                 </button>
             </nav>

@@ -17,8 +17,8 @@ function Checkout() {
   const navigate = useNavigate();
   const [showCarImage, setShowCarImage] = useState(false);
   //console.log(assignedCar);
-  console.log('Selected Category Name:', selectedCategoryName);
-  console.log('Selected Category Icon:', selectedCategoryIcon);
+  console.log('Selected Category Name:', assignedCar);
+  console.log('Selected Category Icon:', assignedDriver);
 
   console.log(selectedCategoryId);
 

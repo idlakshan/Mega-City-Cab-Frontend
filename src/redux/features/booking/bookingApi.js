@@ -30,8 +30,22 @@ const bookingApi = createApi({
             }),
             providesTags: ['Booking'],
         }),
+        getAllBookings: builder.query({
+            query: () => ({
+                url: '/booking',
+                method: 'GET'
+            }),
+            providesTags: ['Booking'],
+        }),
+        getOngoingBookings: builder.query({
+            query: () => ({
+                url: '/booking/status/InProgress',
+                method: 'GET'
+            }),
+            providesTags: ['Booking'],
+        }),
     }),
 });
 
-export const { useGetBookingsCountQuery, useGetLast7DaysDataQuery } = bookingApi;
+export const { useGetBookingsCountQuery, useGetLast7DaysDataQuery,useGetAllBookingsQuery,useGetOngoingBookingsQuery } = bookingApi;
 export default bookingApi;
