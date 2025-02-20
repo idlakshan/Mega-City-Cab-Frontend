@@ -9,11 +9,14 @@ const ManageDriver = () => {
 
   const {data: driverResponse,isLoading: isDriversLoading,isError: isDriverError, refetch} = useGetDriversQuery();
   const [deleteDriver]=useDeleteDriverMutation();
- 
+  console.log(driverResponse?.data[0]);
+  //const driversData = driverResponse?.data?.vehicles || [];
+
+  
 
   console.log(driverResponse)
   useEffect(() => {
-    if (driverResponse) {
+    if (driverResponse?.data) {
       setDrivers(driverResponse.data); 
     }
   }, [driverResponse]);

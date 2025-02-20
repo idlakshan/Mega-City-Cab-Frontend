@@ -18,7 +18,14 @@ const bookingApi = createApi({
     endpoints: (builder) => ({
         getBookingsCount: builder.query({
             query: () => ({
-                url: '/booking/bookings-count/',
+                url: '/booking/bookings-count',
+                method: 'GET'
+            }),
+            providesTags: ['Booking'],
+        }),
+        getLast7DaysData: builder.query({
+            query: () => ({
+                url: '/booking/last-7-days-data',
                 method: 'GET'
             }),
             providesTags: ['Booking'],
@@ -26,5 +33,5 @@ const bookingApi = createApi({
     }),
 });
 
-export const { useGetBookingsCountQuery } = bookingApi;
+export const { useGetBookingsCountQuery, useGetLast7DaysDataQuery } = bookingApi;
 export default bookingApi;

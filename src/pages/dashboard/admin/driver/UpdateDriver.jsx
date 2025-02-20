@@ -10,11 +10,11 @@ const UpdateDriver = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const { data: driverData, isLoading: isDriverLoading, error: driverError } = useGetDriverByIdQuery(id);
-  const [updateDriver, { isLoading: isUpdating, error: updateError }] = useUpdateDriverMutation();
+  const { data: driverData, isLoading: isDriverLoading, error: driverError,refetch  } = useGetDriverByIdQuery(id);
+  const [updateDriver, { isLoading: isUpdating, error: updateError, }] = useUpdateDriverMutation();
 
 //   console.log('Driver ID:', id);
-//   console.log('Driver Data:', driverData); 
+ // console.log('Driver Data:', driverData); 
   useEffect(() => {
     if (driverData) {
       const { driverName, driverNic, driverEmail, driverContact, driverAddress, licenseImage, status } = driverData.data;
@@ -97,7 +97,9 @@ const UpdateDriver = () => {
         const result = await updateDriver({ id, formData }).unwrap();
         if (result) {
           toast.success('Driver updated successfully!');
+          refetch();
           navigate('/dashboard/manage-drivers');
+       
         }
       } catch (error) {
         console.error('Error updating driver:', error);

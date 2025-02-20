@@ -13,6 +13,8 @@ const ManageVehicle = () => {
   const [updateCategoryPrice] = useUpdateCategoryPriceMutation(); 
   const [isCategoriesVisible, setIsCategoriesVisible] = useState(false);
 
+  
+  
   const handleDelete = async (carId) => {
    // console.log(carId);
   
@@ -58,6 +60,8 @@ const ManageVehicle = () => {
 
   const initialCategories = categoriesResponse?.data?.categories || [];
   const vehicles = vehiclesResponse?.data?.vehicles || [];
+  
+  
 
   return (
     <div className="">

@@ -11,7 +11,7 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
-import { useGetBookingsCountQuery } from '../../../../redux/features/booking/bookingApi';
+import { useGetBookingsCountQuery, useGetLast7DaysDataQuery } from '../../../../redux/features/booking/bookingApi';
 
 ChartJS.register(
   CategoryScale,
@@ -25,12 +25,13 @@ ChartJS.register(
 );
 
 const AdminDashboardMain = () => {
-  const { data:statsData, error, isLoading } = useGetBookingsCountQuery();
+  const { data: statsData, error: statsError, isLoading: statsLoading } = useGetBookingsCountQuery();
+  const { data: last7DaysData, error: last7DaysError, isLoading: last7DaysLoading } = useGetLast7DaysDataQuery();
 
-  if (isLoading) return <p>Loading...</p>;
-  if (error) return <p>Error fetching data</p>;
+  if (statsLoading || last7DaysLoading) return <p>Loading...</p>;
+  if (statsError || last7DaysError) return <p>Error fetching data</p>;
 
-const stats = statsData?.data
+  const stats = statsData?.data
     ? [
         { title: 'Total Bookings', value: statsData.data.totalBookings },
         { title: 'Active Drivers', value: statsData.data.activeDrivers },
@@ -40,11 +41,11 @@ const stats = statsData?.data
     : [];
 
   const paymentsData = {
-    labels: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+    labels: Object.keys(last7DaysData?.data?.paymentsLast7Days || {}).reverse(),
     datasets: [
       {
         label: 'Total Payments (LKR)',
-        data: [50000, 70000, 90000, 120000, 80000, 110000, 130000],
+        data: Object.values(last7DaysData?.data?.paymentsLast7Days || {}).reverse(),
         backgroundColor: 'rgba(75, 192, 192, 0.6)',
         borderColor: 'rgba(75, 192, 192, 1)',
         borderWidth: 1,
@@ -53,11 +54,11 @@ const stats = statsData?.data
   };
 
   const bookingsData = {
-    labels: ['1st', '2nd', '3rd', '4th', '5th', '6th', '7th'],
+    labels: Object.keys(last7DaysData?.data?.bookingsLast7Days || {}).reverse(),
     datasets: [
       {
         label: 'Recent Bookings',
-        data: [12, 19, 3, 5, 2, 3, 7],
+        data: Object.values(last7DaysData?.data?.bookingsLast7Days || {}).reverse(),
         borderColor: 'rgba(153, 102, 255, 1)',
         borderWidth: 2,
         fill: false,
