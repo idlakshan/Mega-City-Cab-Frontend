@@ -21,6 +21,11 @@ import Success from '../pages/BookingSuccess';
 import ManageUsers from '../pages/dashboard/admin/user/ManageUser';
 import BookingTable from '../components/BookingTable';
 import OngoingBookingsTable from '../components/OngoingBookingTable';
+
+
+import Payment from '../pages/dashboard/customer/payment/Payment';
+import CustomerDashboardMain from '../pages/dashboard/customer/dashboard/CustomerDashboardMain';
+import MyTrip from '../pages/dashboard/customer/my-trip/MyTrip';
 const router = createBrowserRouter([
     {
         path: '/',
@@ -66,15 +71,24 @@ const router = createBrowserRouter([
         path:'/dashboard',
         element:<PrivateRoute><DashboardLayout/></PrivateRoute>,
         children:[
+
+            //Customer routes
+
             {
                 path:'',
-                element:<AdminDashboard/>
+                element:<CustomerDashboardMain/>
+            },
+            {
+                path:'my-trips',
+                element:<MyTrip/>
+            },
+            {
+                path:'payments',
+                element:<Payment/>
             },
 
 
-
-          
-            
+         //admin routes
             {
                 path:'admin',
                 element:<PrivateRoute role="ADMIN"><AdminDashboardMain/></PrivateRoute>
@@ -116,9 +130,6 @@ const router = createBrowserRouter([
                 path:'edit-driver/:id',
                 element:<PrivateRoute role="ADMIN"><UpdateDriver/></PrivateRoute>
             },
-           
-           
-
            
 
         ]
