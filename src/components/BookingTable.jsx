@@ -19,7 +19,8 @@ const BookingTable = () => {
     String(booking.car.carNumber).toLowerCase().includes(searchTerm.toLowerCase()) ||
     String(booking.car.carName).toLowerCase().includes(searchTerm.toLowerCase()) ||
     String(booking.driver.driverName).toLowerCase().includes(searchTerm.toLowerCase()) ||
-    String(booking.driver.driverNic).toLowerCase().includes(searchTerm.toLowerCase())
+    String(booking.driver.driverNic).toLowerCase().includes(searchTerm.toLowerCase())||
+    String(booking.status).toLowerCase().includes(searchTerm.toLowerCase())
   );
 
 
@@ -70,6 +71,9 @@ const BookingTable = () => {
                     <div className="font-semibold text-left">Booking Date & Time</div>
                   </th>
                   <th className="p-2 whitespace-nowrap">
+                    <div className="font-semibold text-left">Booking Status</div>
+                  </th>
+                  <th className="p-2 whitespace-nowrap">
                     <div className="font-semibold text-left">Customer Name</div>
                   </th>
                   <th className="p-2 whitespace-nowrap">
@@ -87,6 +91,7 @@ const BookingTable = () => {
                   <th className="p-2 whitespace-nowrap">
                     <div className="font-semibold text-left">Driver NIC</div>
                   </th>
+                
                 </tr>
               </thead>
 
@@ -106,6 +111,14 @@ const BookingTable = () => {
                       <div className="text-left text-primary-black">{booking.bookingDateTime}</div>
                     </td>
                     <td className="p-2 whitespace-nowrap">
+                      <div className={`px-2 py-1 rounded-full text-sm ${booking.status === 'Completed'
+                            ? 'bg-green-100 text-green-800'
+                            : booking.status === 'InProgress'
+                              ? 'bg-yellow-100 text-yellow-800'
+                              : 'bg-red-100 text-red-800'
+                            }`}>{booking.status}</div>
+                    </td>
+                    <td className="p-2 whitespace-nowrap">
                       <div className="text-left text-primary-black">{booking.customerName}</div>
                     </td>
                     <td className="p-2 whitespace-nowrap">
@@ -123,6 +136,7 @@ const BookingTable = () => {
                     <td className="p-2 whitespace-nowrap">
                       <div className="text-left text-primary-black">{booking.driver.driverNic}</div>
                     </td>
+                  
                   </tr>
                 ))}
               </tbody>

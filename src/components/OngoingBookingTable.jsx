@@ -1,23 +1,24 @@
 import React, { useState } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
-import { useGetAllBookingsQuery } from "../redux/features/booking/bookingApi";
+import { useGetAllBookingsQuery, useUpdateBookingMutation } from "../redux/features/booking/bookingApi";
+import { useDispatch } from "react-redux";
+import { toast } from "react-toastify";
 
 const OngoingBookingsTable = () => {
-  const {
-    data: bookingData,
-    isLoading: isBookingLoading,
-    isError: isBookingError,
-    refetch,
-  } = useGetAllBookingsQuery();
+  const {data: bookingData,isLoading: isBookingLoading,isError: isBookingError,refetch,} = useGetAllBookingsQuery();
+  const[updateBooking]=useUpdateBookingMutation();
+  const dispatch=useDispatch();
 
   const [searchTerm, setSearchTerm] = useState("");
 
-  // Filter ongoing bookings (status === "InProgress")
   const ongoingBookings = bookingData?.data?.bookings?.filter(
     (booking) => booking.status === "InProgress"
   ) || [];
 
-  // Filter bookings based on search term
+  console.log(ongoingBookings);
+  
+
+ 
   const filteredBookings = ongoingBookings.filter((booking) =>
     booking.bookingId.toString().includes(searchTerm.toLowerCase()) ||
     booking.car.carNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -26,11 +27,16 @@ const OngoingBookingsTable = () => {
     booking.dropLocation.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Handle status change
-  const handleStatusChange = (bookingId, newStatus) => {
-    alert(`Status for Booking ID ${bookingId} changed to ${newStatus}`);
-    // You can add an API call here to update the status in the backend
-  };
+
+  const handleStatusChange = async (bookingId, newStatus) => {
+    try {
+        const result = await updateBooking({ bookingId, status: newStatus }).unwrap();
+        toast.success(`Booking ID ${bookingId} updated to ${newStatus}`);
+    } catch (error) {
+        toast.error('Failed to update booking. Try again!');
+    }
+};
+
 
   if (isBookingLoading) {
     return <div>Loading...</div>;
@@ -66,10 +72,10 @@ const OngoingBookingsTable = () => {
                     <div className="font-semibold text-left">Booking ID</div>
                   </th>
                   <th className="p-2 whitespace-nowrap">
-                    <div className="font-semibold text-left">Car ID</div>
+                    <div className="font-semibold text-left">Date Time</div>
                   </th>
                   <th className="p-2 whitespace-nowrap">
-                    <div className="font-semibold text-left">Driver ID</div>
+                    <div className="font-semibold text-left">Car Name</div>
                   </th>
                   <th className="p-2 whitespace-nowrap">
                     <div className="font-semibold text-left">Car Number</div>
@@ -96,10 +102,10 @@ const OngoingBookingsTable = () => {
                       <div className="font-medium text-primary-black">{booking.bookingId}</div>
                     </td>
                     <td className="p-2 whitespace-nowrap">
-                      <div className="text-left text-primary-black">{booking.car.carId}</div>
+                      <div className="text-left text-primary-black">{booking.bookingDateTime}</div>
                     </td>
                     <td className="p-2 whitespace-nowrap">
-                      <div className="text-left text-primary-black">{booking.driver.driverId}</div>
+                      <div className="text-left text-primary-black">{booking.car.carName}</div>
                     </td>
                     <td className="p-2 whitespace-nowrap">
                       <div className="text-left text-primary-black">{booking.car.carNumber}</div>

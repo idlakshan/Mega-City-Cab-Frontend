@@ -44,8 +44,16 @@ const bookingApi = createApi({
             }),
             providesTags: ['Booking'],
         }),
+        updateBooking: builder.mutation({
+            query: (data) => ({
+                url: '/booking',
+                method: 'PUT',
+                body:data
+            }),
+            invalidatesTags: ['Booking'],
+        }),
     }),
 });
 
-export const { useGetBookingsCountQuery, useGetLast7DaysDataQuery,useGetAllBookingsQuery,useGetOngoingBookingsQuery } = bookingApi;
+export const { useGetBookingsCountQuery, useGetLast7DaysDataQuery,useGetAllBookingsQuery,useGetOngoingBookingsQuery,useUpdateBookingMutation } = bookingApi;
 export default bookingApi;
