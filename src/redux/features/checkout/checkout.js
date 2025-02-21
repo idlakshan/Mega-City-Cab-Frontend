@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
- // Import the default icon
+
 
 const checkoutSlice = createSlice({
   name: "checkout",
@@ -20,7 +20,6 @@ const checkoutSlice = createSlice({
       state.selectedCategoryPrice = action.payload;
     },
     setSelectedCategoryDetails: (state, action) => {
-   //   console.log("Dispatching setSelectedCategoryDetails:", action.payload); 
       state.selectedCategoryId = action.payload.id;
       state.selectedCategoryName = action.payload.name;
       state.selectedCategoryIcon = action.payload.icon; 

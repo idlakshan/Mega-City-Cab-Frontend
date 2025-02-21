@@ -1,40 +1,46 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FiCalendar, FiMapPin, FiDollarSign, FiCheckCircle, FiXCircle, FiClock } from 'react-icons/fi';
+import { useGetBookingDetailsQuery } from '../../../../redux/features/booking/bookingApi';
 
 const MyTrip = () => {
-  const trips = [
-    {
-      id: 1,
-      date: '2023-10-15',
-      pickupLocation: 'Colombo Fort',
-      dropLocation: 'Negombo',
-      cost: 'LKR 2,500',
-      status: 'Completed',
-    },
-    {
-      id: 2,
-      date: '2023-10-10',
-      pickupLocation: 'Kandy',
-      dropLocation: 'Galle',
-      cost: 'LKR 4,000',
-      status: 'InProgress',
-    },
-    {
-      id: 3,
-      date: '2023-10-05',
-      pickupLocation: 'Gampaha',
-      dropLocation: 'Colombo',
-      cost: 'LKR 1,800',
-      status: 'Cancelled',
-    },
-  ];
+  const { data: bookingDetails, isLoading, isError, refetch } = useGetBookingDetailsQuery();
+  const [selectedDate, setSelectedDate] = useState('');
+  const [selectedStatus, setSelectedStatus] = useState('all');
+
+  if (isLoading) return <div>Loading...</div>;
+  if (isError) return <div>Error fetching data</div>;
+
+ 
+  const trips = bookingDetails?.data?.data?.map((trip) => ({
+    id: trip.bookingId,
+    date: trip.payment.paymentDate,
+    pickupLocation: trip.pickupLocation,
+    dropLocation: trip.dropLocation,
+    cost: `LKR ${trip.payment?.amount?.toFixed(2) || '0.00'}`,
+    status: trip.status,
+  })) || [];
+
+
+  const filteredTrips = trips.filter((trip) => {
+    const matchesDate = selectedDate ? new Date(trip.date).toISOString().split('T')[0] === selectedDate : true;
+    const matchesStatus =
+      selectedStatus === 'all' ||
+      (selectedStatus === 'completed' && trip.status === 'Completed') ||
+      (selectedStatus === 'inprogress' && trip.status === 'InProgress') ||
+      (selectedStatus === 'cancelled' && trip.status === 'Cancelled');
+    return matchesDate && matchesStatus;
+  });
 
   return (
     <>
       <h1 className="text-3xl font-bold text-primary-black mb-8">My Trips</h1>
 
       <div className="mb-6 flex items-center space-x-4">
-        <select className="p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-yellow">
+        <select
+          className="p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-yellow"
+          value={selectedStatus}
+          onChange={(e) => setSelectedStatus(e.target.value)}
+        >
           <option value="all">All Trips</option>
           <option value="completed">Completed</option>
           <option value="inprogress">In Progress</option>
@@ -43,11 +49,13 @@ const MyTrip = () => {
         <input
           type="date"
           className="p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-yellow"
+          value={selectedDate}
+          onChange={(e) => setSelectedDate(e.target.value)}
         />
       </div>
 
       <div className="space-y-4">
-        {trips.map((trip) => (
+        {filteredTrips.map((trip) => (
           <div key={trip.id} className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">

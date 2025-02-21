@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Bar } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -10,7 +10,7 @@ import {
   Legend,
 } from 'chart.js';
 import { FiClock, FiMapPin, FiDollarSign, FiUser } from 'react-icons/fi';
-import { useGetUserStatsQuery } from '../../../../redux/features/booking/bookingApi';
+import { useGetPaymentHistoryQuery, useGetUserStatsQuery } from '../../../../redux/features/booking/bookingApi';
 import { useFetchCurrentUserQuery } from '../../../../redux/features/auth/authApi';
 
 ChartJS.register(
@@ -24,29 +24,70 @@ ChartJS.register(
 
 const CustomerDashboardMain = () => {
  
-  const { data: userData, isLoading: isUserLoading } = useFetchCurrentUserQuery();
+  const { data: userData, isLoading: isUserLoading,refetch:userDetailsRefetch } = useFetchCurrentUserQuery();
 
   const { data: userStats, isLoading: isStatsLoading, isError,refetch } = useGetUserStatsQuery();
+  const { data: paymentHistoryData, isLoading: isPaymentHistoryLoading,refetch:PaymentHistoryRefetch } = useGetPaymentHistoryQuery();
 
-  const paymentHistory = {
-    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+  console.log(paymentHistoryData?.data.paymentHistory);
+  
+
+  const [paymentHistory, setPaymentHistory] = useState({
+    labels: [],
     datasets: [
       {
         label: 'Payments (LKR)',
-        data: [5000, 7000, 9000, 12000, 8000, 11000, 13000],
+        data: [],
         backgroundColor: 'rgba(75, 192, 192, 0.6)',
         borderColor: 'rgba(75, 192, 192, 1)',
         borderWidth: 1,
       },
     ],
-  };
+  });
+
+  useEffect(() => {
+    if (paymentHistoryData && paymentHistoryData.data && paymentHistoryData.data.paymentHistory) {
+      const labels = Object.keys(paymentHistoryData.data.paymentHistory);
+      const data = Object.values(paymentHistoryData.data.paymentHistory);
+  
+      setPaymentHistory({
+        labels: labels,
+        datasets: [
+          {
+            label: 'Payments (LKR)',
+            data: data,
+            backgroundColor: 'rgba(75, 192, 192, 0.6)',
+            borderColor: 'rgba(75, 192, 192, 1)',
+            borderWidth: 1,
+          },
+        ],
+      });
+    } else {
+
+      setPaymentHistory({
+        labels: [],
+        datasets: [
+          {
+            label: 'Payments (LKR)',
+            data: [],
+            backgroundColor: 'rgba(75, 192, 192, 0.6)',
+            borderColor: 'rgba(75, 192, 192, 1)',
+            borderWidth: 1,
+          },
+        ],
+      });
+    }
+  }, [paymentHistoryData]);
+  
 
   useEffect(()=>{
         refetch()
-  },[refetch])
+        PaymentHistoryRefetch()
+        userDetailsRefetch()
+  },[refetch,PaymentHistoryRefetch,userDetailsRefetch])
 
 
-  if (isUserLoading || isStatsLoading) return <div>Loading...</div>;
+  if (isPaymentHistoryLoading||isUserLoading || isStatsLoading) return <div>Loading...</div>;
 
   if (isError) return <div>Error fetching data</div>;
 

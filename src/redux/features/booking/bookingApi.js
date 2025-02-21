@@ -54,7 +54,21 @@ const bookingApi = createApi({
         }),
         getUserStats: builder.query({
             query: () => ({
-                url: `/booking/user-stats`, // No userId in the URL
+                url: '/booking/user-stats',
+                method: 'GET'
+            }),
+            providesTags: ['Booking'],
+        }),
+        getPaymentHistory: builder.query({
+            query: () => ({
+                url: '/booking/payment-history',
+                method: 'GET'
+            }),
+            providesTags: ['Booking'],
+        }),
+        getBookingDetails: builder.query({
+            query: () => ({
+                url: '/booking/booking-details',
                 method: 'GET'
             }),
             providesTags: ['Booking'],
@@ -68,7 +82,9 @@ export const {
     useGetAllBookingsQuery,
     useGetOngoingBookingsQuery,
     useUpdateBookingMutation,
-    useGetUserStatsQuery 
+    useGetUserStatsQuery,
+    useGetPaymentHistoryQuery,
+    useGetBookingDetailsQuery
 } = bookingApi;
 
 export default bookingApi;
