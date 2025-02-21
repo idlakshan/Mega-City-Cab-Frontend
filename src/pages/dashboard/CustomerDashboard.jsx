@@ -36,6 +36,7 @@ const CustomerDashboard = () => {
                             <NavLink
                                 to={item.path}
                                 className="flex items-center p-2 rounded-lg hover:bg-primary-yellow hover:text-primary-black transition-all duration-300"
+                             
                             >
                                 {item.icon}
                                 <span className="ml-2">{item.label}</span>

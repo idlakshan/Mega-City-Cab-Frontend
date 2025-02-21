@@ -1,5 +1,5 @@
 import React from 'react';
-import { FiCalendar, FiMapPin, FiDollarSign, FiCheckCircle, FiXCircle } from 'react-icons/fi';
+import { FiCalendar, FiMapPin, FiDollarSign, FiCheckCircle, FiXCircle, FiClock } from 'react-icons/fi';
 
 const MyTrip = () => {
   const trips = [
@@ -17,7 +17,7 @@ const MyTrip = () => {
       pickupLocation: 'Kandy',
       dropLocation: 'Galle',
       cost: 'LKR 4,000',
-      status: 'Completed',
+      status: 'InProgress',
     },
     {
       id: 3,
@@ -37,6 +37,7 @@ const MyTrip = () => {
         <select className="p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-yellow">
           <option value="all">All Trips</option>
           <option value="completed">Completed</option>
+          <option value="inprogress">In Progress</option>
           <option value="cancelled">Cancelled</option>
         </select>
         <input
@@ -45,7 +46,6 @@ const MyTrip = () => {
         />
       </div>
 
-   
       <div className="space-y-4">
         {trips.map((trip) => (
           <div key={trip.id} className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
@@ -72,14 +72,18 @@ const MyTrip = () => {
                   {trip.cost}
                 </p>
                 <p
-                  className={`text-sm font-medium ${
-                    trip.status === 'Completed' ? 'text-green-600' : 'text-red-600'
-                  } flex items-center`}
+                  className={`text-sm font-medium flex items-center ${
+                    trip.status === 'Completed' ? 'text-green-600' :
+                    trip.status === 'Cancelled' ? 'text-red-600' :
+                    'text-yellow-600'
+                  }`}
                 >
                   {trip.status === 'Completed' ? (
                     <FiCheckCircle className="mr-1" />
-                  ) : (
+                  ) : trip.status === 'Cancelled' ? (
                     <FiXCircle className="mr-1" />
+                  ) : (
+                    <FiClock className="mr-1" />
                   )}
                   {trip.status}
                 </p>

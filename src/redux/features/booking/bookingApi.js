@@ -48,12 +48,27 @@ const bookingApi = createApi({
             query: (data) => ({
                 url: '/booking',
                 method: 'PUT',
-                body:data
+                body: data
             }),
             invalidatesTags: ['Booking'],
+        }),
+        getUserStats: builder.query({
+            query: () => ({
+                url: `/booking/user-stats`, // No userId in the URL
+                method: 'GET'
+            }),
+            providesTags: ['Booking'],
         }),
     }),
 });
 
-export const { useGetBookingsCountQuery, useGetLast7DaysDataQuery,useGetAllBookingsQuery,useGetOngoingBookingsQuery,useUpdateBookingMutation } = bookingApi;
+export const { 
+    useGetBookingsCountQuery, 
+    useGetLast7DaysDataQuery,
+    useGetAllBookingsQuery,
+    useGetOngoingBookingsQuery,
+    useUpdateBookingMutation,
+    useGetUserStatsQuery 
+} = bookingApi;
+
 export default bookingApi;
