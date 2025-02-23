@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import VehicleTable from '../../../../components/VehicleTable';
 import {useGetCategoryQuery,useUpdateCategoryPriceMutation, } from '../../../../redux/features/category/categoryApi';
@@ -12,6 +12,11 @@ const ManageVehicle = () => {
   const [deleteCar] = useDeleteCarMutation();
   const [updateCategoryPrice] = useUpdateCategoryPriceMutation(); 
   const [isCategoriesVisible, setIsCategoriesVisible] = useState(false);
+
+  
+  useEffect(()=>{
+    refetch();
+  },[refetch])
 
   
   

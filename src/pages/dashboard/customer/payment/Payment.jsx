@@ -12,16 +12,7 @@ import {
 } from 'chart.js';
 import { FiDownload, FiFilter, FiCalendar } from 'react-icons/fi';
 
-// Register Chart.js components
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend
-);
+
 
 const MyPayments = () => {
   const [payments, setPayments] = useState([]);
@@ -41,23 +32,7 @@ const MyPayments = () => {
     ],
   });
 
-  // Fetch payment history from the API
-  useEffect(() => {
-    const fetchPayments = async () => {
-      try {
-        const response = await fetch('/api/payment-history');
-        const data = await response.json();
-        if (data.status === 200) {
-          setPayments(data.data);
-          setFilteredPayments(data.data);
-        }
-      } catch (error) {
-        console.error('Error fetching payments:', error);
-      }
-    };
 
-    fetchPayments();
-  }, []);
 
   // Filter payments by date range
   const filterPayments = () => {
@@ -72,62 +47,8 @@ const MyPayments = () => {
   };
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
-      <h1 className="text-3xl font-bold text-primary-black mb-8">My Payments</h1>
-
-      {/* Filter Section */}
-      <div className="bg-white p-6 rounded-lg shadow-md mb-8">
-        <h2 className="text-xl font-semibold text-primary-black mb-4">Filter Payments</h2>
-        <div className="flex items-center space-x-4">
-          <div className="flex items-center space-x-2">
-            <FiCalendar className="h-5 w-5 text-gray-500" />
-            <input
-              type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-              className="p-2 border border-gray-300 rounded-lg"
-            />
-          </div>
-          <span className="text-gray-500">to</span>
-          <div className="flex items-center space-x-2">
-            <FiCalendar className="h-5 w-5 text-gray-500" />
-            <input
-              type="date"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-              className="p-2 border border-gray-300 rounded-lg"
-            />
-          </div>
-          <button
-            onClick={filterPayments}
-            className="bg-primary-yellow text-primary-black font-semibold py-2 px-4 rounded hover:bg-yellow-500 transition-colors flex items-center"
-          >
-            <FiFilter className="mr-2" /> Apply Filter
-          </button>
-        </div>
-      </div>
-
-      {/* Payment Trends Chart */}
-      <div className="bg-white p-6 rounded-lg shadow-md mb-8">
-        <h2 className="text-xl font-semibold text-primary-black mb-4">Payment Trends</h2>
-        <Line
-          data={paymentTrends}
-          options={{
-            responsive: true,
-            plugins: {
-              legend: {
-                position: 'top',
-              },
-              title: {
-                display: true,
-                text: 'Monthly Payment Trends in LKR',
-              },
-            },
-          }}
-        />
-      </div>
-
-      {/* Payment History Table */}
+    <>
+   
       <div className="bg-white p-6 rounded-lg shadow-md">
         <h2 className="text-xl font-semibold text-primary-black mb-4">Payment History</h2>
         <div className="overflow-x-auto">
@@ -174,7 +95,7 @@ const MyPayments = () => {
           </table>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

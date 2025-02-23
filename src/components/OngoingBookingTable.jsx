@@ -121,6 +121,7 @@ const OngoingBookingsTable = () => {
                       >
                         <option value="InProgress">InProgress</option>
                         <option value="Completed">Completed</option>
+                        <option value="Canceled">Canceled</option>
                       </select>
                     </td>
                     <td className="p-2 whitespace-nowrap">

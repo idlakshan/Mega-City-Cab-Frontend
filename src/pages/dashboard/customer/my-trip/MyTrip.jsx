@@ -27,7 +27,7 @@ const MyTrip = () => {
       selectedStatus === 'all' ||
       (selectedStatus === 'completed' && trip.status === 'Completed') ||
       (selectedStatus === 'inprogress' && trip.status === 'InProgress') ||
-      (selectedStatus === 'cancelled' && trip.status === 'Cancelled');
+      (selectedStatus === 'canceled' && trip.status === 'Canceled');
     return matchesDate && matchesStatus;
   });
 
@@ -44,7 +44,7 @@ const MyTrip = () => {
           <option value="all">All Trips</option>
           <option value="completed">Completed</option>
           <option value="inprogress">In Progress</option>
-          <option value="cancelled">Cancelled</option>
+          <option value="canceled">Canceled</option>
         </select>
         <input
           type="date"
@@ -82,7 +82,7 @@ const MyTrip = () => {
                 <p
                   className={`text-sm font-medium flex items-center ${
                     trip.status === 'Completed' ? 'text-green-600' :
-                    trip.status === 'Cancelled' ? 'text-red-600' :
+                    trip.status === 'Canceled' ? 'text-red-600' :
                     'text-yellow-600'
                   }`}
                 >

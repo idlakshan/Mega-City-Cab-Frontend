@@ -13,6 +13,9 @@ const ManageDriver = () => {
   //const driversData = driverResponse?.data?.vehicles || [];
 
   
+  useEffect(()=>{
+   refetch();
+  },[refetch])
 
   console.log(driverResponse)
   useEffect(() => {

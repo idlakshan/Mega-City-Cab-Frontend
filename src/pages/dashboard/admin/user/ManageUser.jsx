@@ -17,6 +17,10 @@ const ManageUsers = () => {
     }
   }, [userResponse]);
 
+  useEffect(()=>{
+    refetch();
+  },[refetch])
+
   const handleDelete = async (userId) => {
     try {
       await deleteUser(userId).unwrap();
