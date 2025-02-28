@@ -130,7 +130,6 @@ const Booking = () => {
                 if (response.data.status === 200) {
                     const { car, driver } = response.data.data;
 
-                    // Store assigned car and driver in Redux
                     dispatch(setAssignedCar(car));
                     dispatch(setAssignedDriver(driver));
 

@@ -39,7 +39,7 @@ const Navbar = () => {
 
   const customerDropDownMenus = [
     { label: "Dashboard", path: "/dashboard" },
-    { label: "My-Trips", path: "/dashboard/bookings" },
+    { label: "My-Trips", path: "/dashboard/my-trips" },
     { label: "Payments", path: "/dashboard/payments" },
   ];
 

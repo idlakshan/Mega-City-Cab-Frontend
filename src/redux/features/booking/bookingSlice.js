@@ -14,6 +14,7 @@ const initialState = {
     tax: 0,
     total: 0,
   },
+  bookingId:'',
 };
 
 const bookingSlice = createSlice({
@@ -35,9 +36,12 @@ const bookingSlice = createSlice({
     setPaymentDetails: (state, action) => {
       state.paymentDetails = action.payload;
     },
+    setBookingId: (state, action) => {
+      state.bookingId = action.payload; // Reducer to set bookingId
+    },
   },
 });
 
-export const { setPickupLocation, setDropLocation, setDateTime, setUserDetails, setPaymentDetails } = bookingSlice.actions;
+export const { setPickupLocation, setDropLocation, setDateTime, setUserDetails, setPaymentDetails,setBookingId } = bookingSlice.actions;
 
 export default bookingSlice.reducer;

@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { FiCalendar, FiMapPin } from 'react-icons/fi';
 
 import { useNavigate } from 'react-router-dom';
 import { loadStripe } from '@stripe/stripe-js';
 import { toast } from 'sonner';
+import { setBookingId } from '../redux/features/booking/bookingSlice';
 
 function Checkout() {
   const checkoutData = useSelector((state) => state.checkout.checkoutData);
@@ -14,9 +15,10 @@ function Checkout() {
   const selectedCategoryId = useSelector((state) => state.checkout.selectedCategoryId);
   const assignedCar = useSelector((state) => state.checkout.assignedCar);
   const assignedDriver = useSelector((state) => state.checkout.assignedDriver);
+  const distpatch=useDispatch();
+
   const navigate = useNavigate();
   const [showCarImage, setShowCarImage] = useState(false);
-  //console.log(assignedCar);
   console.log('Selected Category Name:', assignedCar);
   console.log('Selected Category Icon:', assignedDriver);
 
@@ -42,15 +44,14 @@ function Checkout() {
     try {
       const stripe = await loadStripe(import.meta.env.VITE_STRIPE_PK);
   
-      // Retrieve user details from local storage
       const storedUser = localStorage.getItem('user');
       if (!storedUser) {
         throw new Error('User not found. Please log in.');
       }
   
       const { userId, role } = JSON.parse(storedUser);
-      
-      const token = localStorage.getItem('token'); 
+  
+      const token = localStorage.getItem('token');
       if (!token) {
         throw new Error('Authentication token not found. Please log in.');
       }
@@ -83,6 +84,13 @@ function Checkout() {
       }
   
       const session = await response.json();
+      console.log(session); // { id: 'cs_test_...', bookingId: 44 }
+  
+      // Store bookingId in local storage
+      localStorage.setItem('bookingId', session.bookingId);
+      localStorage.setItem('assignedCar', JSON.stringify(assignedCar));
+       localStorage.setItem('assignedDriver', JSON.stringify(assignedDriver));
+      
   
       const result = await stripe.redirectToCheckout({
         sessionId: session.id,
@@ -91,7 +99,6 @@ function Checkout() {
       if (result.error) {
         throw new Error(result.error.message);
       }
-  
     } catch (error) {
       console.error('Checkout Error:', error);
       toast.error(`Checkout failed: ${error.message}`);
