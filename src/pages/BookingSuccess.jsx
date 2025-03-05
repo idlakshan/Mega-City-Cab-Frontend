@@ -17,7 +17,7 @@ function Success() {
     }
     const timer = setTimeout(() => {
       navigate('/');
-    }, 45000);
+    }, 2000);
     return () => clearTimeout(timer);
   }, [navigate]);
 

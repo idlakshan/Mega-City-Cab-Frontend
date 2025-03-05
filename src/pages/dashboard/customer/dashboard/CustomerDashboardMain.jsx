@@ -12,6 +12,7 @@ import {
 import { FiClock, FiMapPin, FiDollarSign, FiUser } from 'react-icons/fi';
 import { useGetPaymentHistoryQuery, useGetUserStatsQuery } from '../../../../redux/features/booking/bookingApi';
 import { useFetchCurrentUserQuery } from '../../../../redux/features/auth/authApi';
+import UpdateProfileModal from '../../../../components/UpdateProfileModal ';
 
 ChartJS.register(
   CategoryScale,
@@ -30,6 +31,11 @@ const CustomerDashboardMain = () => {
   const { data: paymentHistoryData, isLoading: isPaymentHistoryLoading,refetch:PaymentHistoryRefetch } = useGetPaymentHistoryQuery();
 
   console.log(paymentHistoryData?.data.paymentHistory);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+const openModal = () => setIsModalOpen(true);
+const closeModal = () => setIsModalOpen(false);
   
 
   const [paymentHistory, setPaymentHistory] = useState({
@@ -143,22 +149,34 @@ const CustomerDashboardMain = () => {
       </div>
 
       <div className="bg-white p-6 rounded-lg shadow-md">
-        <h2 className="text-xl font-semibold text-primary-black mb-4">Profile Information</h2>
-        <div className="space-y-4">
-          <div>
-            <p className="text-sm text-gray-500">Name</p>
-            <p className="text-md font-medium text-gray-600">{userData?.name}</p>
-          </div>
-          <div>
-            <p className="text-sm text-gray-500">Email</p>
-            <p className="text-md font-medium text-gray-600">{userData?.email}</p>
-          </div>
-          <div>
-            <p className="text-sm text-gray-500">Phone</p>
-            <p className="text-md font-medium text-gray-600">{userData?.phone}</p>
-          </div>
-        </div>
-      </div>
+  <h2 className="text-xl font-semibold text-primary-black mb-4">Profile Information</h2>
+  <div className="space-y-4">
+    <div>
+      <p className="text-sm text-gray-500">Name</p>
+      <p className="text-md font-medium text-gray-600">{userData?.name}</p>
+    </div>
+    <div>
+      <p className="text-sm text-gray-500">Email</p>
+      <p className="text-md font-medium text-gray-600">{userData?.email}</p>
+    </div>
+    <div>
+      <p className="text-sm text-gray-500">Phone</p>
+      <p className="text-md font-medium text-gray-600">{userData?.phone}</p>
+    </div>
+    <button
+      onClick={openModal}
+      className="px-4 py-2 bg-primary-yellow text-primary-black shadow-md rounded-md"
+    >
+      Update Profile
+    </button>
+  </div>
+</div>
+
+<UpdateProfileModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        userData={userData}
+      />
     </>
   );
 };
