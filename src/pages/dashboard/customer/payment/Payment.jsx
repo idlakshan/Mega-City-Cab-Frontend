@@ -48,7 +48,7 @@ const MyPayments = () => {
   }, [bookingDetails]);
 
   useEffect(() => {
-    filterPayments(); 
+    filterPayments();
   }, [payments, searchBookingId, startDate, endDate]);
 
   const filterPayments = () => {
@@ -146,13 +146,12 @@ const MyPayments = () => {
                   </td>
                   <td className="py-3 px-4 border-b border-gray-200 text-sm text-gray-700">
                     <span
-                      className={`px-2 py-1 rounded-full text-sm font-semibold ${
-                        payment.bookingStatus === 'Completed'
+                      className={`px-2 py-1 rounded-full text-sm font-semibold ${payment.bookingStatus === 'Completed'
                           ? 'bg-green-100 text-green-700'
-                          : payment.bookingStatus === 'Ongoing'
-                          ? 'bg-blue-100 text-blue-700'
-                          : 'bg-red-100 text-red-700'
-                      }`}
+                          : payment.bookingStatus === 'InProgress'
+                            ? 'bg-yellow-100 text-yellow-600'
+                            : 'bg-red-100 text-red-700'
+                        }`}
                     >
                       {payment.bookingStatus}
                     </span>
@@ -168,11 +167,10 @@ const MyPayments = () => {
                   </td>
                   <td className="py-3 px-4 border-b border-gray-200">
                     <span
-                      className={`px-2 py-1 rounded-full text-sm font-semibold ${
-                        payment.status === 'Success'
+                      className={`px-2 py-1 rounded-full text-sm font-semibold ${payment.status === 'Success'
                           ? 'bg-green-100 text-green-700'
                           : 'bg-red-100 text-red-700'
-                      }`}
+                        }`}
                     >
                       {payment.status}
                     </span>
@@ -180,15 +178,15 @@ const MyPayments = () => {
                   <td className="py-3 px-4 border-b border-gray-200">
                     <button
                       onClick={() => downloadInvoice(payment.bookingId)}
-                      disabled={payment.bookingStatus !== 'Completed'}
-                      className={`bg-primary-yellow text-primary-black font-semibold py-1 px-3 rounded transition-colors flex items-center ${
-                        payment.bookingStatus !== 'Completed'
+                      disabled={payment.bookingStatus === 'Canceled'}
+                      className={`bg-primary-yellow text-primary-black font-semibold py-1 px-3 rounded transition-colors flex items-center ${payment.bookingStatus === 'Canceled'
                           ? 'opacity-50 cursor-not-allowed'
                           : 'hover:bg-yellow-500'
-                      }`}
+                        }`}
                     >
                       <FiDownload className="mr-2" /> Receipt
                     </button>
+
                   </td>
                 </tr>
               ))}

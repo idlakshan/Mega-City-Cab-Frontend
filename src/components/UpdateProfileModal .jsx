@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { useUpdateUserMutation } from '../redux/features/auth/authApi';
+import { Toaster } from 'sonner';
+import { toast } from 'react-toastify';
 
 
 const UpdateProfileModal = ({ isOpen, onClose, userData }) => {
   const [name, setName] = useState(userData?.name || '');
   const [email, setEmail] = useState(userData?.email || '');
   const [phone, setPhone] = useState(userData?.phone || '');
-  const [nic, setNic] = useState(userData?.nic || '');
+
 
   const [updateUser, { isLoading }] = useUpdateUserMutation();
 
@@ -14,9 +16,11 @@ const UpdateProfileModal = ({ isOpen, onClose, userData }) => {
     e.preventDefault();
     try {
       await updateUser({ name, email, phone, }).unwrap();
+      toast.success("User Updated Successfully");
       onClose();
     } catch (error) {
       console.error('Failed to update user:', error);
+      toast.error("Failed to update user");
     }
   };
 

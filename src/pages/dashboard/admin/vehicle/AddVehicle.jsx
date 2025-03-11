@@ -39,7 +39,7 @@ console.log(addError);
       carNumber: Yup.string()
         .matches(
           /^[A-Z]{2,3}-\d{4}$/,
-          'Car Number must be in Sri Lankan format (e.g., ABC-1234)'
+          'Car Number must be in Sri Lankan format'
         )
         .required('Car Number is required'),
       carImage: Yup.mixed().required('Car Image is required'),

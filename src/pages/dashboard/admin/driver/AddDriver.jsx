@@ -22,8 +22,8 @@ const AddDriver = () => {
       driverName: Yup.string().required('Driver Name is required'),
       driverNic: Yup.string()
         .matches(
-          /^[0-9]{9}[vVxX]?$/,
-          'NIC must be in Sri Lankan format (e.g., 123456789V)'
+          /^(?:\d{9}[VvXx]|\d{12})$/,
+          'NIC must be in Sri Lankan format'
         )
         .required('NIC is required'),
       driverEmail: Yup.string()
