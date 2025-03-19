@@ -1,266 +1,171 @@
 import React, { useState } from 'react';
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
-import { FaTimes, FaUser, FaIdCard, FaEnvelope, FaPhone, FaImage, FaCheckCircle } from 'react-icons/fa';
-import { useAddDriverMutation } from '../../../../redux/features/driver/driverApi';
 import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import * as yup from 'yup';
 
-const AddDriver = () => {
-  const [addDriver, { isLoading: isAdding, error: addError }] = useAddDriverMutation();
+// Define the validation schema using yup
+const contactSchema = yup.object().shape({
+  name: yup.string().required('Name is required'),
+  email: yup.string().email('Invalid email format').required('Email is required'),
+  phone: yup
+    .string()
+    .matches(/^[0-9]{10}$/, 'Contact number must be 10 digits (e.g., 0712345678)')
+    .required('Phone number is required'),
+  subject: yup.string().required('Subject is required'),
+  message: yup.string().required('Message is required'),
+});
 
-  const formik = useFormik({
-    initialValues: {
-      driverName: '',
-      driverNic: '',
-      driverEmail: '',
-      driverContact: '',
-      driverAddress: '',
-      licenseImage: null,
-      status: 'Available',
-    },
-    validationSchema: Yup.object({
-      driverName: Yup.string().required('Driver Name is required'),
-      driverNic: Yup.string()
-        .matches(
-          /^(?:\d{9}[VvXx]|\d{12})$/,
-          'NIC must be in Sri Lankan format'
-        )
-        .required('NIC is required'),
-      driverEmail: Yup.string()
-        .email('Invalid email address')
-        .required('Email is required'),
-      driverContact: Yup.string()
-        .matches(
-          /^[0-9]{10}$/,
-          'Contact number must be 10 digits (e.g., 0712345678)'
-        )
-        .required('Contact is required'),
-      driverAddress: Yup.string().required('Address is required'),
-      licenseImage: Yup.mixed().required('License Image is required'),
-      status: Yup.string().required('Status is required'),
-    }),
-    onSubmit: async (values) => {
-      const formData = new FormData();
-      formData.append('driverName', values.driverName);
-      formData.append('driverNic', values.driverNic);
-      formData.append('driverEmail', values.driverEmail);
-      formData.append('driverContact', values.driverContact);
-      formData.append('driverAddress', values.driverAddress);
-      formData.append('licenseImage', values.licenseImage);
-      
-      try {
-        const result = await addDriver(formData).unwrap();
-        if (result) {
-          toast.success('Driver added successfully!');
-          formik.resetForm();
-        }
-      } catch (error) {
-        console.error('Error adding driver:', error);
-        toast.error(error.data?.error?.message || 'Unknown error');
+const ContactUs = () => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const onSubmit = async (event) => {
+    event.preventDefault();
+    setIsSubmitting(true);
+
+    const formData = new FormData(event.target);
+    const data = Object.fromEntries(formData);
+
+    try {
+      // Validate the form data using yup
+      await contactSchema.validate(data, { abortEarly: false });
+
+      formData.append("access_key", import.meta.env.VITE_EMAIL_KEY);
+
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        toast.success("Message sent successfully!");
+        event.target.reset(); // Reset the form
+      } else {
+        toast.error("Failed to send message. Please try again.");
       }
-    },
-  });
-
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      formik.setFieldValue('licenseImage', file);
+    } catch (error) {
+      if (error instanceof yup.ValidationError) {
+        // Display validation errors using toast
+        error.inner.forEach((err) => {
+          toast.error(err.message);
+        });
+      } else {
+        toast.error("An error occurred. Please try again later.");
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  const clearImage = () => {
-    formik.setFieldValue('licenseImage', null);
-  };
-
   return (
-    <>
-      <h1 className="text-3xl font-bold mb-8 text-center text-primary-black">
-        Add New Driver
-      </h1>
-      <form onSubmit={formik.handleSubmit} className="flex gap-8">
-        <div className="w-1/2 space-y-6">
-          {/* Driver Name */}
-          <div>
-            <label htmlFor="driverName" className="block text-sm font-medium text-primary-black">
-              Driver Name
-            </label>
-            <div className="relative">
-              <input
-                type="text"
-                id="driverName"
-                name="driverName"
-                value={formik.values.driverName}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                className="mt-1 block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-yellow focus:border-primary-yellow transition-all"
-                placeholder="Enter Driver Name"
-              />
-              <FaUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-            </div>
-            {formik.touched.driverName && formik.errors.driverName ? (
-              <div className="text-red-500 text-sm mt-1">{formik.errors.driverName}</div>
-            ) : null}
-          </div>
+    <div className='min-h-screen section_container pt-10 px-4 sm:px-10 bg-white'>
+      <div className='w-full flex flex-col items-center justify-center space-y-1'>
+        <h1 className='text-primary-black text-4xl sm:text-5xl font-bold pt-10 text-center'>
+          Connect with Us
+        </h1>
+        <p className='text-primary-black pt-3 text-lg text-center max-w-2xl px-4'>
+          We’re here to answer your questions and provide support
+        </p>
+      </div>
 
-          {/* Driver NIC */}
-          <div>
-            <label htmlFor="driverNic" className="block text-sm font-medium text-primary-black">
-              Driver NIC
-            </label>
-            <div className="relative">
-              <input
-                type="text"
-                id="driverNic"
-                name="driverNic"
-                value={formik.values.driverNic}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                className="mt-1 block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-yellow focus:border-primary-yellow transition-all"
-                placeholder="Enter NIC (e.g., 123456789V)"
-              />
-              <FaIdCard className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+      <div className='flex flex-col md:flex-row justify-between mt-10 md:mt-20 px-4 sm:px-10 lg:px-24 max-w-8xl mx-auto'>
+        {/* Contact Information */}
+        <div className='w-full md:w-[500px] p-6 md:p-8 bg-primary-light rounded-md mb-8 md:mb-0'>
+          <div className='space-y-6'>
+            <div className='flex items-center space-x-4'>
+              <div>
+                <h3 className='text-lg font-semibold text-primary-black'>Email</h3>
+                <p className='text-primary-black'>id.lakshan21@gmail.com</p>
+              </div>
             </div>
-            {formik.touched.driverNic && formik.errors.driverNic ? (
-              <div className="text-red-500 text-sm mt-1">{formik.errors.driverNic}</div>
-            ) : null}
-          </div>
-
-          {/* Driver Email */}
-          <div>
-            <label htmlFor="driverEmail" className="block text-sm font-medium text-primary-black">
-              Driver Email
-            </label>
-            <div className="relative">
-              <input
-                type="email"
-                id="driverEmail"
-                name="driverEmail"
-                value={formik.values.driverEmail}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                className="mt-1 block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-yellow focus:border-primary-yellow transition-all"
-                placeholder="Enter Email"
-              />
-              <FaEnvelope className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <div className='flex items-center space-x-4'>
+              <div>
+                <h3 className='text-lg font-semibold text-primary-black'>Phone</h3>
+                <p className='text-primary-black'>071 4038546</p>
+              </div>
             </div>
-            {formik.touched.driverEmail && formik.errors.driverEmail ? (
-              <div className="text-red-500 text-sm mt-1">{formik.errors.driverEmail}</div>
-            ) : null}
-          </div>
-
-          {/* Driver Contact */}
-          <div>
-            <label htmlFor="driverContact" className="block text-sm font-medium text-primary-black">
-              Driver Contact
-            </label>
-            <div className="relative">
-              <input
-                type="text"
-                id="driverContact"
-                name="driverContact"
-                value={formik.values.driverContact}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                className="mt-1 block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-yellow focus:border-primary-yellow transition-all"
-                placeholder="Enter Contact (e.g., 0712345678)"
-              />
-              <FaPhone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <div className='flex items-center space-x-4'>
+              <div>
+                <h3 className='text-lg font-semibold text-primary-black'>Address</h3>
+                <p className='text-primary-black'>
+                  Mega Cabs - Headquarters
+                  <br />
+                  No 456 / B, Kings Lane, Bambalapitiya,
+                  <br />
+                  Sri Lanka
+                </p>
+              </div>
             </div>
-            {formik.touched.driverContact && formik.errors.driverContact ? (
-              <div className="text-red-500 text-sm mt-1">{formik.errors.driverContact}</div>
-            ) : null}
-          </div>
-
-          {/* Driver Address */}
-          <div>
-            <label htmlFor="driverAddress" className="block text-sm font-medium text-primary-black">
-              Driver Address
-            </label>
-            <div className="relative">
-              <input
-                type="text"
-                id="driverAddress"
-                name="driverAddress"
-                value={formik.values.driverAddress}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                className="mt-1 block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-yellow focus:border-primary-yellow transition-all"
-                placeholder="Enter Address"
-              />
-              <FaIdCard className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-            </div>
-            {formik.touched.driverAddress && formik.errors.driverAddress ? (
-              <div className="text-red-500 text-sm mt-1">{formik.errors.driverAddress}</div>
-            ) : null}
-          </div>
-
-          {/* License Image */}
-          <div>
-            <label htmlFor="licenseImage" className="block text-sm font-medium text-primary-black">
-              License Image
-            </label>
-            <div className="relative">
-              <input
-                type="file"
-                id="licenseImage"
-                name="licenseImage"
-                onChange={handleImageChange}
-                className="hidden"
-                accept="image/*"
-              />
-              <label
-                htmlFor="licenseImage"
-                className="cursor-pointer bg-primary-light px-4 py-2 rounded-md border border-gray-300 hover:bg-gray-100 flex items-center gap-2"
-              >
-                <FaImage className="text-gray-400" />
-                <span>Choose License Image</span>
-              </label>
-            </div>
-            {formik.touched.licenseImage && formik.errors.licenseImage ? (
-              <div className="text-red-500 text-sm mt-1">{formik.errors.licenseImage}</div>
-            ) : null}
-          </div>
-
-          {/* Submit Button */}
-          <div className="w-1/3">
-            <button
-              type="submit"
-              disabled={!formik.isValid || !formik.dirty || isAdding}
-              className={`bg-primary-yellow flex items-center gap-2 text-primary-black py-2 px-4 rounded-md text-lg shadow-lg ${
-                !formik.isValid || !formik.dirty ? "bg-gray-300 text-gray-500 cursor-not-allowed" : ""
-              }`}
-            >
-              <FaCheckCircle />
-              <span>{isAdding ? 'Adding...' : 'Add Driver'}</span>
-            </button>
           </div>
         </div>
 
-        {/* Image Preview */}
-        <div className="w-1/2 flex justify-center items-center">
-          {formik.values.licenseImage ? (
-            <div className="relative">
-              <img
-                src={URL.createObjectURL(formik.values.licenseImage)}
-                alt="License Preview"
-                className="w-64 h-64 object-cover rounded-md shadow-lg"
+        {/* Contact Form */}
+        <div className='w-full md:w-1/2'>
+          <form className='space-y-6 bg-primary-light p-6 md:p-8 rounded-md' onSubmit={onSubmit}>
+            <div>
+              <input
+                type='text'
+                id='name'
+                name='name'
+                className='mt-1 p-3 w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500'
+                placeholder='Your Name'
               />
+            </div>
+            <div>
+              <input
+                type='email'
+                id='email'
+                name='email'
+                className='mt-1 p-3 w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500'
+                placeholder='Your Email'
+              />
+            </div>
+            <div>
+              <input
+                type='tel'
+                id='phone'
+                name='phone'
+                className='mt-1 p-3 w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500'
+                placeholder='Your Phone Number'
+              />
+            </div>
+            <div>
+              <input
+                type='text'
+                id='subject'
+                name='subject'
+                className='mt-1 p-3 w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500'
+                placeholder='Subject'
+              />
+            </div>
+            <div>
+              <textarea
+                id='message'
+                name='message'
+                rows='4'
+                className='mt-1 p-3 w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500'
+                placeholder='Your Message'
+              />
+            </div>
+            <div className='flex justify-center md:justify-end'>
               <button
-                type="button"
-                onClick={clearImage}
-                className="absolute top-2 right-2 bg-white rounded-full p-1 hover:bg-gray-100"
+                type='submit'
+                className='bg-primary-black text-white px-6 py-3 rounded-lg w-full md:w-auto disabled:opacity-50'
+                disabled={isSubmitting}
               >
-                <FaTimes className="text-red-500" />
+                {isSubmitting ? 'Sending...' : 'Send Message'}
               </button>
             </div>
-          ) : (
-            <div className="text-gray-400">No image selected</div>
-          )}
+          </form>
         </div>
-      </form>
-    </>
+      </div>
+    </div>
   );
 };
 
-export default AddDriver;
+export default ContactUs;
