@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import VehicleTable from '../../../../components/VehicleTable';
 import {useGetCategoryQuery,useUpdateCategoryPriceMutation, } from '../../../../redux/features/category/categoryApi';
@@ -21,8 +21,6 @@ const ManageVehicle = () => {
   
   
   const handleDelete = async (carId) => {
-   // console.log(carId);
-  
     try {
       await deleteCar(carId).unwrap();
       toast.success('The car has been successfully deleted!')
@@ -63,8 +61,8 @@ const ManageVehicle = () => {
     return <div className="p-6 bg-gray-50 min-h-screen">Error loading data.</div>;
   }
 
-  const initialCategories = categoriesResponse?.data?.categories || [];
-  const vehicles = vehiclesResponse?.data?.vehicles || [];
+  const initialCategories = categoriesResponse?.data || [];
+  const vehicles = vehiclesResponse?.data || [];
   
   
 

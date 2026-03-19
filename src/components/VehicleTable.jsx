@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import{ useState } from 'react';
 import { FaEdit } from 'react-icons/fa';
 import { AiOutlineSearch } from "react-icons/ai";
 import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
 
 const VehicleTable = ({ vehicles, categories, handleDelete }) => {
 
@@ -20,6 +21,8 @@ const VehicleTable = ({ vehicles, categories, handleDelete }) => {
     vehicle.status.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  console.log(filteredVehicles);
+  
   return (
     <section>
       <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
@@ -70,7 +73,7 @@ const VehicleTable = ({ vehicles, categories, handleDelete }) => {
                       <div className="flex items-center">
                         <div className="w-10 h-10 flex-shrink-0 mr-2 sm:mr-3">
                           <img
-                            src={`http://localhost:8080/api/v1/uploads/vehicles/${vehicle.carImage}`}
+                            src={vehicle.carImage}
                             alt={vehicle.carName}
                             className="rounded-full"
                             width="40"
@@ -108,7 +111,7 @@ const VehicleTable = ({ vehicles, categories, handleDelete }) => {
                           </span>
                         ) : (
                           <Link
-                            to={`/dashboard/edit-vehicle/${vehicle.id}`}
+                            to={`/dashboard/edit-vehicle/${vehicle.carId}`}
                             className="text-blue-500 hover:text-blue-700 transition-colors"
                           >
                             <FaEdit className="inline-block" /> Edit
@@ -141,6 +144,26 @@ const VehicleTable = ({ vehicles, categories, handleDelete }) => {
       </div>
     </section>
   );
+};
+
+VehicleTable.propTypes = {
+  vehicles: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+      carName: PropTypes.string.isRequired,
+      carNumber: PropTypes.string.isRequired,
+      categoryId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+      carImage: PropTypes.string.isRequired,
+      status: PropTypes.oneOf(['Available', 'Booked']).isRequired,
+    })
+  ).isRequired,
+  categories: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+      name: PropTypes.string.isRequired,
+    })
+  ).isRequired,
+  handleDelete: PropTypes.func.isRequired,
 };
 
 export default VehicleTable;

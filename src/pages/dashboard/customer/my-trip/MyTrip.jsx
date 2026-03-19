@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { FiCalendar, FiMapPin, FiDollarSign, FiCheckCircle, FiXCircle, FiClock } from 'react-icons/fi';
 import { useGetBookingDetailsQuery } from '../../../../redux/features/booking/bookingApi';
 
 const MyTrip = () => {
-  const { data: bookingDetails, isLoading, isError, refetch } = useGetBookingDetailsQuery();
+  const { data: bookingDetails, isLoading, isError } = useGetBookingDetailsQuery();
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('all');
 
@@ -11,7 +11,7 @@ const MyTrip = () => {
   if (isError) return <div>Error fetching data</div>;
 
  
-  const trips = bookingDetails?.data?.data?.map((trip) => ({
+  const trips = bookingDetails?.data?.map((trip) => ({
     id: trip.bookingId,
     date: trip.payment.paymentDate,
     pickupLocation: trip.pickupLocation,

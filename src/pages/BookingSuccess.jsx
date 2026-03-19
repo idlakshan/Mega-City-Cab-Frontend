@@ -1,14 +1,17 @@
-import React, { useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
+import { useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 function Success() {
   const navigate = useNavigate();
-  const bookingId = localStorage.getItem('bookingId');
-  const token = localStorage.getItem('token');
-  const storedCar = JSON.parse(localStorage.getItem('assignedCar'));
-  const storedDriver = JSON.parse(localStorage.getItem('assignedDriver'));
+  const bookingId = localStorage.getItem("bookingId");
+  const token = localStorage.getItem("token");
+  const storedCar = JSON.parse(localStorage.getItem("assignedCar"));
+  const storedDriver = JSON.parse(localStorage.getItem("assignedDriver"));
   const invoiceDownloaded = useRef(false);
+
+  console.log(storedCar);
+  
 
   useEffect(() => {
     if (!invoiceDownloaded.current) {
@@ -16,29 +19,32 @@ function Success() {
       invoiceDownloaded.current = true;
     }
     const timer = setTimeout(() => {
-      navigate('/');
-    }, 10000);
+      navigate("/");
+    }, 6000);
     return () => clearTimeout(timer);
   }, [navigate]);
 
   const downloadInvoice = async () => {
     try {
       if (!bookingId) {
-        throw new Error('Booking ID not found');
+        throw new Error("Booking ID not found");
       }
-      const response = await fetch(`http://localhost:8080/api/v1/generate-invoice?bookingId=${bookingId}`, {
-        method: "GET",
-        headers: {
-          "Authorization": `Bearer ${token}`,
+      const response = await fetch(
+        `http://localhost:8080/api/v1/generate-invoice?bookingId=${bookingId}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          credentials: "include",
         },
-        credentials: 'include',
-      });
+      );
       if (!response.ok) {
-        throw new Error('Failed to fetch invoice');
+        throw new Error("Failed to fetch invoice");
       }
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = url;
       a.download = `invoice-${bookingId}.pdf`;
       document.body.appendChild(a);
@@ -46,7 +52,7 @@ function Success() {
       a.remove();
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      console.error('Invoice Download Error:', error);
+      console.error("Invoice Download Error:", error);
       toast.error(`Failed to download invoice: ${error.message}`);
     }
   };
@@ -69,44 +75,46 @@ function Success() {
           />
         </svg>
 
-   
-        <h1 className="text-4xl font-bold text-gray-800 mt-6">Payment Successful!</h1>
+        <h1 className="text-4xl font-bold text-gray-800 mt-6">
+          Payment Successful!
+        </h1>
         <p className="text-gray-600 mt-4">
-          Your invoice is being downloaded. You will be redirected to the home page shortly.
+          Your invoice is being downloaded. You will be redirected to the home
+          page shortly.
         </p>
-
 
         {storedCar && storedDriver && (
           <div className="mt-6 bg-gray-50 p-6 rounded-lg space-y-4">
-       
             <div className="flex justify-center">
               <img
-                src={`http://localhost:8080/api/v1/uploads/vehicles/${storedCar.carImage}`}
+                src={storedCar.carImage}
                 alt={`${storedCar.carName} Image`}
                 className="w-48 h-32 object-cover rounded-md shadow-md"
                 onError={(e) => {
-                  e.target.src = 'https://via.placeholder.com/192'; 
+                  e.target.src = "https://via.placeholder.com/192";
                 }}
               />
             </div>
 
-  
-            <h2 className="text-xl font-semibold text-gray-700">Your Booking Details</h2>
+            <h2 className="text-xl font-semibold text-gray-700">
+              Your Booking Details
+            </h2>
             <div className="space-y-2 text-left">
               <p className="text-gray-600">
-                <span className="font-medium">Car:</span> {storedCar.carName} ({storedCar.carNumber})
+                <span className="font-medium">Car:</span> {storedCar.carName} (
+                {storedCar.carNumber})
               </p>
               <p className="text-gray-600">
-                <span className="font-medium">Driver:</span> {storedDriver.driverName} ({storedDriver.driverContact})
+                <span className="font-medium">Driver:</span>{" "}
+                {storedDriver.driverName} ({storedDriver.driverContact})
               </p>
             </div>
           </div>
         )}
 
-   
         <div className="mt-8">
           <button
-            onClick={() => navigate('/')}
+            onClick={() => navigate("/")}
             className="px-8 py-3 bg-primary-black text-white rounded-lg hover:bg-black transition-colors"
           >
             Go to Home

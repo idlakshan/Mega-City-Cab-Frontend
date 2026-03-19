@@ -1,16 +1,24 @@
-import React, { useState } from 'react';
-import { AiOutlineSearch } from 'react-icons/ai';
-
+import { useState } from "react";
+import PropTypes from "prop-types";
+import { AiOutlineSearch } from "react-icons/ai";
 
 const UserTable = ({ users, handleDelete }) => {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
 
-  const filteredUsers = users.filter((user) =>
-    user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.nic.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.phone.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const userList = Array.isArray(users) ? users : users?.data || [];
+  console.log(userList);
+
+  const filteredUsers = userList.filter((user) => {
+    const term = searchTerm.toLowerCase();
+
+    return (
+      user?.name?.toLowerCase().includes(term) ||
+      user?.nic?.toLowerCase().includes(term) ||
+      user?.email?.toLowerCase().includes(term) ||
+      user?.phone?.toLowerCase().includes(term) ||
+      user?.roles?.some((role) => role.toLowerCase().includes(term))
+    );
+  });
 
   return (
     <section>
@@ -56,46 +64,61 @@ const UserTable = ({ users, handleDelete }) => {
               </thead>
 
               <tbody className="text-sm divide-y divide-gray-100">
-                {filteredUsers.map((user) => (
-                  <tr key={user.id}>
-                    <td className="p-2 whitespace-nowrap">
-                      <div className="font-medium text-primary-black">{user.name}</div>
-                    </td>
-                    <td className="p-2 whitespace-nowrap">
-                      <div className="text-left text-primary-black">{user.nic}</div>
-                    </td>
-                    <td className="p-2 whitespace-nowrap">
-                      <div className="text-left text-primary-black">{user.email}</div>
-                    </td>
-                    <td className="p-2 whitespace-nowrap">
-                      <div className="text-left text-primary-black">{user.phone}</div>
-                    </td>
-                    <td className="p-2 whitespace-nowrap">
-                      <div className="text-left">
-                        <span
-                          className={`px-2 py-1 rounded-full text-sm ${user.role.name === 'CUSTOMER'
-                            ? 'bg-green-100 text-green-800'
-                            : user.role.name === 'ADMIN'
-                              ? 'bg-yellow-100 text-yellow-800'
-                              : 'bg-red-100 text-red-800'
+                {filteredUsers.map((user) => {
+                  const roleName = user?.roles?.[0] || "UNKNOWN";
+
+                  return (
+                    <tr key={user.id}>
+                      <td className="p-2 whitespace-nowrap">
+                        <div className="font-medium text-primary-black">
+                          {user?.name}
+                        </div>
+                      </td>
+                      <td className="p-2 whitespace-nowrap">
+                        <div className="text-left text-primary-black">
+                          {user?.nic}
+                        </div>
+                      </td>
+                      <td className="p-2 whitespace-nowrap">
+                        <div className="text-left text-primary-black">
+                          {user?.email}
+                        </div>
+                      </td>
+                      <td className="p-2 whitespace-nowrap">
+                        <div className="text-left text-primary-black">
+                          {user?.phone}
+                        </div>
+                      </td>
+                      <td className="p-2 whitespace-nowrap">
+                        <div className="text-left">
+                          <span
+                            className={`px-2 py-1 rounded-full text-sm ${
+                              roleName === "CUSTOMER"
+                                ? "bg-green-100 text-green-800"
+                                : roleName === "ADMIN"
+                                  ? "bg-yellow-100 text-yellow-800"
+                                  : "bg-red-100 text-red-800"
                             }`}
-                        >
-                          {user.role.name}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="p-2 whitespace-nowrap">
-                      <div className="text-left">
-                        <button
-                          onClick={() => handleDelete(user.id)}
-                          className="text-red-500 hover:text-red-700 transition-colors"
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+                          >
+                            {roleName}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="p-2 whitespace-nowrap">
+                        <div className="text-left">
+                          {roleName !== "ADMIN" && (
+                            <button
+                              onClick={() => handleDelete(user.id)}
+                              className="text-red-500 hover:text-red-700 transition-colors"
+                            >
+                              Delete
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -103,6 +126,34 @@ const UserTable = ({ users, handleDelete }) => {
       </div>
     </section>
   );
+};
+
+UserTable.propTypes = {
+  users: PropTypes.oneOfType([
+    PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.number.isRequired,
+        name: PropTypes.string,
+        nic: PropTypes.string,
+        email: PropTypes.string,
+        phone: PropTypes.string,
+        roles: PropTypes.arrayOf(PropTypes.string),
+      }),
+    ),
+    PropTypes.shape({
+      data: PropTypes.arrayOf(
+        PropTypes.shape({
+          id: PropTypes.number.isRequired,
+          name: PropTypes.string,
+          nic: PropTypes.string,
+          email: PropTypes.string,
+          phone: PropTypes.string,
+          roles: PropTypes.arrayOf(PropTypes.string),
+        }),
+      ),
+    }),
+  ]).isRequired,
+  handleDelete: PropTypes.func.isRequired,
 };
 
 export default UserTable;

@@ -1,4 +1,3 @@
-import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useRegisterUserMutation } from "../redux/features/auth/authApi";
@@ -28,7 +27,7 @@ const Signup = () => {
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
       const response = await registerUser(values);
-      if (response.data.status === "success") {
+      if (response.data.status === 201) {
         toast.success(response.data.message);
         navigate("/login");
       } else {
@@ -45,7 +44,9 @@ const Signup = () => {
   return (
     <div className=" bg-gray-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 !-mb-24">
       <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-lg -mt-8">
-        <h2 className="text-3xl font-bold text-center text-primary-black mb-8">Sign Up</h2>
+        <h2 className="text-3xl font-bold text-center text-primary-black mb-8">
+          Sign Up
+        </h2>
         <Formik
           initialValues={{
             name: "",
@@ -59,9 +60,11 @@ const Signup = () => {
         >
           {({ isSubmitting, isValid, dirty }) => (
             <Form className="space-y-6">
- 
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-primary-black">
+                <label
+                  htmlFor="name"
+                  className="block text-sm font-medium text-primary-black"
+                >
                   Name
                 </label>
                 <Field
@@ -71,12 +74,18 @@ const Signup = () => {
                   className="mt-1 p-3 w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="Enter your name"
                 />
-                <ErrorMessage name="name" component="p" className="text-red-500 text-sm mt-1" />
+                <ErrorMessage
+                  name="name"
+                  component="p"
+                  className="text-red-500 text-sm mt-1"
+                />
               </div>
 
-             
               <div>
-                <label htmlFor="phone" className="block text-sm font-medium text-primary-black">
+                <label
+                  htmlFor="phone"
+                  className="block text-sm font-medium text-primary-black"
+                >
                   Phone
                 </label>
                 <Field
@@ -86,12 +95,18 @@ const Signup = () => {
                   className="mt-1 p-3 w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="Enter your phone number"
                 />
-                <ErrorMessage name="phone" component="p" className="text-red-500 text-sm mt-1" />
+                <ErrorMessage
+                  name="phone"
+                  component="p"
+                  className="text-red-500 text-sm mt-1"
+                />
               </div>
 
-       
               <div>
-                <label htmlFor="nic" className="block text-sm font-medium text-primary-black">
+                <label
+                  htmlFor="nic"
+                  className="block text-sm font-medium text-primary-black"
+                >
                   NIC
                 </label>
                 <Field
@@ -101,12 +116,18 @@ const Signup = () => {
                   className="mt-1 p-3 w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="Enter your NIC"
                 />
-                <ErrorMessage name="nic" component="p" className="text-red-500 text-sm mt-1" />
+                <ErrorMessage
+                  name="nic"
+                  component="p"
+                  className="text-red-500 text-sm mt-1"
+                />
               </div>
 
-            
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-primary-black">
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-primary-black"
+                >
                   Email
                 </label>
                 <Field
@@ -116,12 +137,18 @@ const Signup = () => {
                   className="mt-1 p-3 w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="Enter your email"
                 />
-                <ErrorMessage name="email" component="p" className="text-red-500 text-sm mt-1" />
+                <ErrorMessage
+                  name="email"
+                  component="p"
+                  className="text-red-500 text-sm mt-1"
+                />
               </div>
 
-         
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-primary-black">
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-primary-black"
+                >
                   Password
                 </label>
                 <Field
@@ -131,25 +158,28 @@ const Signup = () => {
                   className="mt-1 p-3 w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="Enter your password"
                 />
-                <ErrorMessage name="password" component="p" className="text-red-500 text-sm mt-1" />
+                <ErrorMessage
+                  name="password"
+                  component="p"
+                  className="text-red-500 text-sm mt-1"
+                />
               </div>
 
-            
               <div>
                 <button
                   type="submit"
                   disabled={!isValid || !dirty || isSubmitting}
                   className={`w-full px-6 py-3 rounded-lg transition-colors duration-300 
-                    ${isValid && dirty
-                      ? "bg-primary-black text-white hover:bg-gray-900"
-                      : "bg-gray-400 text-gray-700 cursor-not-allowed"
+                    ${
+                      isValid && dirty
+                        ? "bg-primary-black text-white hover:bg-gray-900"
+                        : "bg-gray-400 text-gray-700 cursor-not-allowed"
                     }`}
                 >
                   {isSubmitting ? "Signing Up..." : "Sign Up"}
                 </button>
               </div>
 
-     
               <div className="text-center">
                 <p className="text-gray-600">
                   Already have an account?{" "}

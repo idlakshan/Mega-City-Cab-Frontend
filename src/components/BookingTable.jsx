@@ -1,28 +1,51 @@
-import React, { useState, useEffect } from 'react';
-import { AiOutlineSearch } from 'react-icons/ai';
-import { useGetAllBookingsQuery } from '../redux/features/booking/bookingApi';
+import { useState, useEffect } from "react";
+import { AiOutlineSearch } from "react-icons/ai";
+import { useGetAllBookingsQuery } from "../redux/features/booking/bookingApi";
 
 const BookingTable = () => {
-  const { data: BookingData, isLoading: isBookingLoading, isError: isBookingError, refetch } = useGetAllBookingsQuery();
+  const {
+    data: BookingData,
+    isLoading: isBookingLoading,
+    isError: isBookingError,
+    refetch,
+  } = useGetAllBookingsQuery();
 
-  const bookings = BookingData?.data?.bookings || [];
-  //console.log(bookings);
+  const bookings = BookingData?.data || [];
+  console.log(bookings);
 
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
 
-  const filteredBookings = bookings.filter((booking) =>
-    String(booking.bookingId).toLowerCase().includes(searchTerm.toLowerCase()) ||
-    String(booking.pickupLocation).toLowerCase().includes(searchTerm.toLowerCase()) ||
-    String(booking.dropLocation).toLowerCase().includes(searchTerm.toLowerCase()) ||
-    String(booking.customerName).toLowerCase().includes(searchTerm.toLowerCase()) ||
-    String(booking.customerPhone).toLowerCase().includes(searchTerm.toLowerCase()) ||
-    String(booking.car.carNumber).toLowerCase().includes(searchTerm.toLowerCase()) ||
-    String(booking.car.carName).toLowerCase().includes(searchTerm.toLowerCase()) ||
-    String(booking.driver.driverName).toLowerCase().includes(searchTerm.toLowerCase()) ||
-    String(booking.driver.driverNic).toLowerCase().includes(searchTerm.toLowerCase())||
-    String(booking.status).toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredBookings = bookings.filter(
+    (booking) =>
+      String(booking.bookingId)
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      String(booking.pickupLocation)
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      String(booking.dropLocation)
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      String(booking.customerName)
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      String(booking.customerPhone)
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      String(booking.car.carNumber)
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      String(booking.car.carName)
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      String(booking.driver.driverName)
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      String(booking.driver.driverNic)
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      String(booking.status).toLowerCase().includes(searchTerm.toLowerCase()),
   );
-
 
   useEffect(() => {
     refetch();
@@ -62,22 +85,30 @@ const BookingTable = () => {
                     <div className="font-semibold text-left">#Booking ID</div>
                   </th>
                   <th className="p-2 whitespace-nowrap">
-                    <div className="font-semibold text-left">Pickup Location</div>
+                    <div className="font-semibold text-left">
+                      Pickup Location
+                    </div>
                   </th>
                   <th className="p-2 whitespace-nowrap">
                     <div className="font-semibold text-left">Drop Location</div>
                   </th>
                   <th className="p-2 whitespace-nowrap">
-                    <div className="font-semibold text-left">Booking Date & Time</div>
+                    <div className="font-semibold text-left">
+                      Booking Date & Time
+                    </div>
                   </th>
                   <th className="p-2 whitespace-nowrap">
-                    <div className="font-semibold text-left">Booking Status</div>
+                    <div className="font-semibold text-left">
+                      Booking Status
+                    </div>
                   </th>
                   <th className="p-2 whitespace-nowrap">
                     <div className="font-semibold text-left">Customer Name</div>
                   </th>
                   <th className="p-2 whitespace-nowrap">
-                    <div className="font-semibold text-left">Customer Phone</div>
+                    <div className="font-semibold text-left">
+                      Customer Phone
+                    </div>
                   </th>
                   <th className="p-2 whitespace-nowrap">
                     <div className="font-semibold text-left">Car Number</div>
@@ -91,7 +122,6 @@ const BookingTable = () => {
                   <th className="p-2 whitespace-nowrap">
                     <div className="font-semibold text-left">Driver NIC</div>
                   </th>
-                
                 </tr>
               </thead>
 
@@ -99,44 +129,68 @@ const BookingTable = () => {
                 {filteredBookings.map((booking) => (
                   <tr key={booking.bookingId}>
                     <td className="p-2 whitespace-nowrap">
-                      <div className="font-medium text-primary-black">{booking.bookingId}</div>
+                      <div className="font-medium text-primary-black">
+                        {booking.bookingId}
+                      </div>
                     </td>
                     <td className="p-2 whitespace-nowrap">
-                      <div className="text-left text-primary-black">{booking.pickupLocation}</div>
+                      <div className="text-left text-primary-black">
+                        {booking.pickupLocation}
+                      </div>
                     </td>
                     <td className="p-2 whitespace-nowrap">
-                      <div className="text-left text-primary-black">{booking.dropLocation}</div>
+                      <div className="text-left text-primary-black">
+                        {booking.dropLocation}
+                      </div>
                     </td>
                     <td className="p-2 whitespace-nowrap">
-                      <div className="text-left text-primary-black">{booking.bookingDateTime}</div>
+                      <div className="text-left text-primary-black">
+                        {booking.bookingDateTime}
+                      </div>
                     </td>
                     <td className="p-2 whitespace-nowrap">
-                      <div className={`px-2 py-1 rounded-full text-sm ${booking.status === 'Completed'
-                            ? 'bg-green-100 text-green-800'
-                            : booking.status === 'InProgress'
-                              ? 'bg-yellow-100 text-yellow-800'
-                              : 'bg-red-100 text-red-800'
-                            }`}>{booking.status}</div>
+                      <div
+                        className={`px-2 py-1 rounded-full text-sm ${
+                          booking.status === "Completed"
+                            ? "bg-green-100 text-green-800"
+                            : booking.status === "InProgress"
+                              ? "bg-yellow-100 text-yellow-800"
+                              : "bg-red-100 text-red-800"
+                        }`}
+                      >
+                        {booking.status}
+                      </div>
                     </td>
                     <td className="p-2 whitespace-nowrap">
-                      <div className="text-left text-primary-black">{booking.customerName}</div>
+                      <div className="text-left text-primary-black">
+                        {booking.customerName}
+                      </div>
                     </td>
                     <td className="p-2 whitespace-nowrap">
-                      <div className="text-left text-primary-black">{booking.customerPhone}</div>
+                      <div className="text-left text-primary-black">
+                        {booking.customerPhone}
+                      </div>
                     </td>
                     <td className="p-2 whitespace-nowrap">
-                      <div className="text-left text-primary-black">{booking.car.carNumber}</div>
+                      <div className="text-left text-primary-black">
+                        {booking.car.carNumber}
+                      </div>
                     </td>
                     <td className="p-2 whitespace-nowrap">
-                      <div className="text-left text-primary-black">{booking.car.carName}</div>
+                      <div className="text-left text-primary-black">
+                        {booking.car.carName}
+                      </div>
                     </td>
                     <td className="p-2 whitespace-nowrap">
-                      <div className="text-left text-primary-black">{booking.driver.driverName}</div>
+                      <div className="text-left text-primary-black">
+                        {booking.driver.driverName}
+                      </div>
                     </td>
                     <td className="p-2 whitespace-nowrap">
-                      <div className="text-left text-primary-black">{booking.driver.driverNic}</div>
+                      <div className="text-left text-primary-black">
+                        {booking.driver.driverNic}
+                      </div>
                     </td>
-                  
                   </tr>
                 ))}
               </tbody>

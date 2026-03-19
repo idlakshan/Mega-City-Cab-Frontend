@@ -1,23 +1,48 @@
-import React, { useEffect } from 'react';
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
-import { FaTimes, FaUser, FaIdCard, FaEnvelope, FaPhone, FaImage, FaCheckCircle, FaList } from 'react-icons/fa';
-import { useUpdateDriverMutation, useGetDriverByIdQuery } from '../../../../redux/features/driver/driverApi';
-import { toast } from 'react-toastify';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useEffect } from "react";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import {
+  FaTimes,
+  FaUser,
+  FaIdCard,
+  FaEnvelope,
+  FaPhone,
+  FaImage,
+  FaCheckCircle,
+  FaList,
+} from "react-icons/fa";
+import {
+  useUpdateDriverMutation,
+  useGetDriverByIdQuery,
+} from "../../../../redux/features/driver/driverApi";
+import { toast } from "react-toastify";
+import { useParams, useNavigate } from "react-router-dom";
 
 const UpdateDriver = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const { data: driverData, isLoading: isDriverLoading, error: driverError,refetch  } = useGetDriverByIdQuery(id);
-  const [updateDriver, { isLoading: isUpdating, error: updateError, }] = useUpdateDriverMutation();
+  const {
+    data: driverData,
+    isLoading: isDriverLoading,
+    error: driverError,
+    refetch,
+  } = useGetDriverByIdQuery(id);
+  const [updateDriver, { isLoading: isUpdating }] = useUpdateDriverMutation();
 
-//   console.log('Driver ID:', id);
- // console.log('Driver Data:', driverData); 
+  //   console.log('Driver ID:', id);
+  // console.log('Driver Data:', driverData);
   useEffect(() => {
     if (driverData) {
-      const { driverName, driverNic, driverEmail, driverContact, driverAddress, licenseImage, status } = driverData.data;
+      const {
+        driverName,
+        driverNic,
+        driverEmail,
+        driverContact,
+        driverAddress,
+        licenseImage,
+        status,
+      } = driverData.data;
 
       formik.setValues({
         driverName,
@@ -25,85 +50,73 @@ const UpdateDriver = () => {
         driverEmail,
         driverContact,
         driverAddress,
-        licenseImage: null, 
-        status: status || 'Available', 
+        licenseImage,
+        status: status || "Available",
       });
-
-      if (licenseImage) {
-        fetch(`http://localhost:8080/api/v1/uploads/driver/${licenseImage}`)
-          .then((response) => response.blob())
-          .then((blob) => {
-            const file = new File([blob], licenseImage, { type: blob.type });
-            formik.setFieldValue('licenseImage', file);
-          })
-          .catch((error) => {
-            console.error('Error fetching image:', error);
-          });
-      }
     }
   }, [driverData]);
 
   const formik = useFormik({
     initialValues: {
-      driverName: '',
-      driverNic: '',
-      driverEmail: '',
-      driverContact: '',
-      driverAddress: '',
+      driverName: "",
+      driverNic: "",
+      driverEmail: "",
+      driverContact: "",
+      driverAddress: "",
       licenseImage: null,
-      status: 'Available',
+      status: "Available",
     },
     validationSchema: Yup.object({
-      driverName: Yup.string().required('Driver Name is required'),
+      driverName: Yup.string().required("Driver Name is required"),
       driverNic: Yup.string()
         .matches(
           /^[0-9]{9}[vVxX]?$/,
-          'NIC must be in Sri Lankan format (e.g., 123456789V)'
+          "NIC must be in Sri Lankan format (e.g., 123456789V)",
         )
-        .required('NIC is required'),
+        .required("NIC is required"),
       driverEmail: Yup.string()
-        .email('Invalid email address')
-        .required('Email is required'),
+        .email("Invalid email address")
+        .required("Email is required"),
       driverContact: Yup.string()
         .matches(
           /^[0-9]{10}$/,
-          'Contact number must be 10 digits (e.g., 0712345678)'
+          "Contact number must be 10 digits (e.g., 0712345678)",
         )
-        .required('Contact is required'),
-      driverAddress: Yup.string().required('Address is required'),
-      licenseImage: Yup.mixed().required('License Image is required'),
-      status: Yup.string().required('Status is required'),
+        .required("Contact is required"),
+      driverAddress: Yup.string().required("Address is required"),
+      licenseImage: Yup.mixed().required("License Image is required"),
+      status: Yup.string().required("Status is required"),
     }),
     onSubmit: async (values) => {
-    //   console.log('Form Values:', values);
-    //   console.log('Status:', values.status); 
+      //   console.log('Form Values:', values);
+      //   console.log('Status:', values.status);
 
       const formData = new FormData();
-      formData.append('driverId', id);
-      formData.append('driverName', values.driverName);
-      formData.append('driverNic', values.driverNic);
-      formData.append('driverEmail', values.driverEmail);
-      formData.append('driverContact', values.driverContact);
-      formData.append('driverAddress', values.driverAddress);
-      formData.append('licenseImage', values.licenseImage);
-      formData.append('status', values.status);
+      formData.append("driverId", id);
+      formData.append("driverName", values.driverName);
+      formData.append("driverNic", values.driverNic);
+      formData.append("driverEmail", values.driverEmail);
+      formData.append("driverContact", values.driverContact);
+      formData.append("driverAddress", values.driverAddress);
+      formData.append("licenseImage", values.licenseImage);
+      formData.append("status", values.status);
 
-   
-    //   for (let [key, value] of formData.entries()) {
-    //     console.log(key, value);
-    //   }
+      //   for (let [key, value] of formData.entries()) {
+      //     console.log(key, value);
+      //   }
 
       try {
         const result = await updateDriver({ id, formData }).unwrap();
         if (result) {
-          toast.success('Driver updated successfully!');
+          toast.success("Driver updated successfully!");
           refetch();
-          navigate('/dashboard/manage-drivers');
-       
+          navigate("/dashboard/manage-drivers");
         }
       } catch (error) {
-        console.error('Error updating driver:', error);
-        toast.error(`Failed to update driver: ${error.data?.message || 'Unknown error'}`);
+        console.error("Error updating driver:", error);
+        toast.error(
+          `Failed to update driver: ${error.data?.message || "Unknown error"}`,
+        );
       }
     },
   });
@@ -111,12 +124,12 @@ const UpdateDriver = () => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      formik.setFieldValue('licenseImage', file);
+      formik.setFieldValue("licenseImage", file);
     }
   };
 
   const clearImage = () => {
-    formik.setFieldValue('licenseImage', null);
+    formik.setFieldValue("licenseImage", null);
   };
 
   if (isDriverLoading) {
@@ -135,7 +148,10 @@ const UpdateDriver = () => {
       <form onSubmit={formik.handleSubmit} className="flex gap-8">
         <div className="w-1/2 space-y-6">
           <div>
-            <label htmlFor="driverName" className="block text-sm font-medium text-primary-black">
+            <label
+              htmlFor="driverName"
+              className="block text-sm font-medium text-primary-black"
+            >
               Driver Name
             </label>
             <div className="relative">
@@ -152,13 +168,17 @@ const UpdateDriver = () => {
               <FaUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             </div>
             {formik.touched.driverName && formik.errors.driverName ? (
-              <div className="text-red-500 text-sm mt-1">{formik.errors.driverName}</div>
+              <div className="text-red-500 text-sm mt-1">
+                {formik.errors.driverName}
+              </div>
             ) : null}
           </div>
 
-    
           <div>
-            <label htmlFor="driverNic" className="block text-sm font-medium text-primary-black">
+            <label
+              htmlFor="driverNic"
+              className="block text-sm font-medium text-primary-black"
+            >
               Driver NIC
             </label>
             <div className="relative">
@@ -175,12 +195,17 @@ const UpdateDriver = () => {
               <FaIdCard className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             </div>
             {formik.touched.driverNic && formik.errors.driverNic ? (
-              <div className="text-red-500 text-sm mt-1">{formik.errors.driverNic}</div>
+              <div className="text-red-500 text-sm mt-1">
+                {formik.errors.driverNic}
+              </div>
             ) : null}
           </div>
 
           <div>
-            <label htmlFor="driverEmail" className="block text-sm font-medium text-primary-black">
+            <label
+              htmlFor="driverEmail"
+              className="block text-sm font-medium text-primary-black"
+            >
               Driver Email
             </label>
             <div className="relative">
@@ -197,13 +222,17 @@ const UpdateDriver = () => {
               <FaEnvelope className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             </div>
             {formik.touched.driverEmail && formik.errors.driverEmail ? (
-              <div className="text-red-500 text-sm mt-1">{formik.errors.driverEmail}</div>
+              <div className="text-red-500 text-sm mt-1">
+                {formik.errors.driverEmail}
+              </div>
             ) : null}
           </div>
 
-     
           <div>
-            <label htmlFor="driverContact" className="block text-sm font-medium text-primary-black">
+            <label
+              htmlFor="driverContact"
+              className="block text-sm font-medium text-primary-black"
+            >
               Driver Contact
             </label>
             <div className="relative">
@@ -220,13 +249,17 @@ const UpdateDriver = () => {
               <FaPhone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             </div>
             {formik.touched.driverContact && formik.errors.driverContact ? (
-              <div className="text-red-500 text-sm mt-1">{formik.errors.driverContact}</div>
+              <div className="text-red-500 text-sm mt-1">
+                {formik.errors.driverContact}
+              </div>
             ) : null}
           </div>
 
-        
           <div>
-            <label htmlFor="driverAddress" className="block text-sm font-medium text-primary-black">
+            <label
+              htmlFor="driverAddress"
+              className="block text-sm font-medium text-primary-black"
+            >
               Driver Address
             </label>
             <div className="relative">
@@ -243,13 +276,17 @@ const UpdateDriver = () => {
               <FaIdCard className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             </div>
             {formik.touched.driverAddress && formik.errors.driverAddress ? (
-              <div className="text-red-500 text-sm mt-1">{formik.errors.driverAddress}</div>
+              <div className="text-red-500 text-sm mt-1">
+                {formik.errors.driverAddress}
+              </div>
             ) : null}
           </div>
 
-        
           <div>
-            <label htmlFor="licenseImage" className="block text-sm font-medium text-primary-black">
+            <label
+              htmlFor="licenseImage"
+              className="block text-sm font-medium text-primary-black"
+            >
               License Image
             </label>
             <div className="relative">
@@ -270,13 +307,17 @@ const UpdateDriver = () => {
               </label>
             </div>
             {formik.touched.licenseImage && formik.errors.licenseImage ? (
-              <div className="text-red-500 text-sm mt-1">{formik.errors.licenseImage}</div>
+              <div className="text-red-500 text-sm mt-1">
+                {formik.errors.licenseImage}
+              </div>
             ) : null}
           </div>
 
-       
           <div>
-            <label htmlFor="status" className="block text-sm font-medium text-primary-black">
+            <label
+              htmlFor="status"
+              className="block text-sm font-medium text-primary-black"
+            >
               Status
             </label>
             <div className="relative">
@@ -294,25 +335,28 @@ const UpdateDriver = () => {
               <FaList className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             </div>
             {formik.touched.status && formik.errors.status ? (
-              <div className="text-red-500 text-sm mt-1">{formik.errors.status}</div>
+              <div className="text-red-500 text-sm mt-1">
+                {formik.errors.status}
+              </div>
             ) : null}
           </div>
 
-        
           <div className="w-1/3">
             <button
               type="submit"
               disabled={!formik.isValid || !formik.dirty || isUpdating}
-              className={`bg-primary-yellow flex items-center gap-2 text-primary-black py-2 px-4 rounded-md text-lg shadow-lg ${!formik.isValid || !formik.dirty ? "bg-gray-300 text-gray-500 cursor-not-allowed" : ""
-                }`}
+              className={`bg-primary-yellow flex items-center gap-2 text-primary-black py-2 px-4 rounded-md text-lg shadow-lg ${
+                !formik.isValid || !formik.dirty
+                  ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                  : ""
+              }`}
             >
               <FaCheckCircle />
-              <span>{isUpdating ? 'Updating...' : 'Update Driver'}</span>
+              <span>{isUpdating ? "Updating..." : "Update Driver"}</span>
             </button>
           </div>
         </div>
 
-      
         <div className="w-1/2 flex justify-center items-center">
           {formik.values.licenseImage ? (
             <div className="relative">

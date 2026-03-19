@@ -1,16 +1,15 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-
 const checkoutSlice = createSlice({
   name: "checkout",
   initialState: {
     checkoutData: null,
     selectedCategoryPrice: 0,
-    selectedCategoryName: "Budget", 
+    selectedCategoryName: "Budget",
     selectedCategoryIcon: "mini.png",
     selectedCategoryId: 1,
-    assignedCar: null, 
-    assignedDriver: null, 
+    assignedCar: null,
+    assignedDriver: null,
   },
   reducers: {
     setCheckoutData: (state, action) => {
@@ -22,20 +21,19 @@ const checkoutSlice = createSlice({
     setSelectedCategoryDetails: (state, action) => {
       state.selectedCategoryId = action.payload.id;
       state.selectedCategoryName = action.payload.name;
-      state.selectedCategoryIcon = action.payload.icon; 
-
+      state.selectedCategoryIcon = action.payload.icon;
     },
     setAssignedCar: (state, action) => {
-      state.assignedCar = action.payload; 
+      state.assignedCar = action.payload;
     },
     setAssignedDriver: (state, action) => {
-      state.assignedDriver = action.payload; 
+      state.assignedDriver = action.payload;
     },
     clearBookingData: (state) => {
       state.checkoutData = null;
       state.selectedCategoryPrice = 0;
       state.selectedCategoryName = "Budget";
-      state.selectedCategoryIcon = "mini.png"; 
+      state.selectedCategoryIcon = "mini.png";
     },
   },
 });

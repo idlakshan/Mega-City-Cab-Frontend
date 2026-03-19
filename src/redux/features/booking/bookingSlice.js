@@ -1,24 +1,24 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  pickupLocation: '',
-  dropLocation: '',
-  dateTime: '',
+  pickupLocation: "",
+  dropLocation: "",
+  dateTime: "",
   userDetails: {
-    name: '',
-    email: '',
-    phoneNumber: '',
+    name: "",
+    email: "",
+    phoneNumber: "",
   },
   paymentDetails: {
     budget: 0,
     tax: 0,
     total: 0,
   },
-  bookingId:'',
+  bookingId: "",
 };
 
 const bookingSlice = createSlice({
-  name: 'booking',
+  name: "booking",
   initialState,
   reducers: {
     setPickupLocation: (state, action) => {
@@ -37,11 +37,18 @@ const bookingSlice = createSlice({
       state.paymentDetails = action.payload;
     },
     setBookingId: (state, action) => {
-      state.bookingId = action.payload; // Reducer to set bookingId
+      state.bookingId = action.payload;
     },
   },
 });
 
-export const { setPickupLocation, setDropLocation, setDateTime, setUserDetails, setPaymentDetails,setBookingId } = bookingSlice.actions;
+export const {
+  setPickupLocation,
+  setDropLocation,
+  setDateTime,
+  setUserDetails,
+  setPaymentDetails,
+  setBookingId,
+} = bookingSlice.actions;
 
 export default bookingSlice.reducer;

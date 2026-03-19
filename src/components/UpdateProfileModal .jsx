@@ -1,25 +1,23 @@
-import React, { useState } from 'react';
-import { useUpdateUserMutation } from '../redux/features/auth/authApi';
-import { Toaster } from 'sonner';
-import { toast } from 'react-toastify';
-
+import { useState } from "react";
+import { useUpdateUserMutation } from "../redux/features/auth/authApi";
+import { toast } from "react-toastify";
+import PropTypes from "prop-types";
 
 const UpdateProfileModal = ({ isOpen, onClose, userData }) => {
-  const [name, setName] = useState(userData?.name || '');
-  const [email, setEmail] = useState(userData?.email || '');
-  const [phone, setPhone] = useState(userData?.phone || '');
-
+  const [name, setName] = useState(userData?.name || "");
+  const [email, setEmail] = useState(userData?.email || "");
+  const [phone, setPhone] = useState(userData?.phone || "");
 
   const [updateUser, { isLoading }] = useUpdateUserMutation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await updateUser({ name, email, phone, }).unwrap();
+      await updateUser({ name, email, phone }).unwrap();
       toast.success("User Updated Successfully");
       onClose();
     } catch (error) {
-      console.error('Failed to update user:', error);
+      console.error("Failed to update user:", error);
       toast.error("Failed to update user");
     }
   };
@@ -33,7 +31,9 @@ const UpdateProfileModal = ({ isOpen, onClose, userData }) => {
         <form onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">Name</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Name
+              </label>
               <input
                 type="text"
                 value={name}
@@ -42,7 +42,9 @@ const UpdateProfileModal = ({ isOpen, onClose, userData }) => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Email</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Email
+              </label>
               <input
                 type="email"
                 value={email}
@@ -51,7 +53,9 @@ const UpdateProfileModal = ({ isOpen, onClose, userData }) => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Phone</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Phone
+              </label>
               <input
                 type="text"
                 value={phone}
@@ -73,13 +77,23 @@ const UpdateProfileModal = ({ isOpen, onClose, userData }) => {
               disabled={isLoading}
               className="px-4 py-2 bg-primary-yellow rounded-md text-primary-black shadow-md rounded-m"
             >
-              {isLoading ? 'Updating...' : 'Update'}
+              {isLoading ? "Updating..." : "Update"}
             </button>
           </div>
         </form>
       </div>
     </div>
   );
+};
+
+UpdateProfileModal.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  userData: PropTypes.shape({
+    name: PropTypes.string,
+    email: PropTypes.string,
+    phone: PropTypes.string,
+  }).isRequired,
 };
 
 export default UpdateProfileModal;

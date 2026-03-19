@@ -1,22 +1,22 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
 import { RiMenu3Line, RiCloseLine } from "react-icons/ri";
 import { useDispatch, useSelector } from "react-redux";
-import avatarImage from '../assets/avatar.png';
+import avatarImage from "../assets/avatar.png";
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isDropDownToggle, setIsDropDownToggle] = useState(false);
   const { user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
-  const dispatch = useDispatch(); 
+  const dispatch = useDispatch();
 
   const handleLogout = async () => {
     try {
       localStorage.removeItem("token");
       localStorage.removeItem("user");
-      dispatch({ type: "auth/logout" }); 
+      dispatch({ type: "auth/logout" });
       setIsDropDownToggle(false);
       navigate("/");
     } catch (error) {
@@ -34,7 +34,6 @@ const Navbar = () => {
     { label: "Ongoing Bookings", path: "/dashboard/ongoing-bookings" },
     { label: "Manage Drivers", path: "/dashboard/manage-drivers" },
     { label: "All Bookings", path: "/dashboard/manage-bookings" },
-
   ];
 
   const customerDropDownMenus = [
@@ -43,7 +42,9 @@ const Navbar = () => {
     { label: "Payments", path: "/dashboard/payments" },
   ];
 
-  const dropdownMenus = user?.role === "ADMIN" ? adminDropDownMenus : customerDropDownMenus;
+  const dropdownMenus = user?.roles.includes("ADMIN")
+    ? adminDropDownMenus
+    : customerDropDownMenus;
 
   return (
     <header>
@@ -53,10 +54,18 @@ const Navbar = () => {
         </div>
 
         <ul className="hidden md:flex gap-10 font-semibold text-primary-black ">
-          <li className="link"><Link to="/">Home</Link></li>
-          <li className="link"><Link to="/about">About</Link></li>
-          <li className="link"><Link to="/faqs">FAQs</Link></li>
-          <li className="link"><Link to="/contact">Contact</Link></li>
+          <li className="link">
+            <Link to="/">Home</Link>
+          </li>
+          <li className="link">
+            <Link to="/about">About</Link>
+          </li>
+          <li className="link">
+            <Link to="/faqs">FAQs</Link>
+          </li>
+          <li className="link">
+            <Link to="/contact">Contact</Link>
+          </li>
         </ul>
 
         <div className="flex items-center gap-6">
@@ -113,12 +122,22 @@ const Navbar = () => {
         </div>
       </nav>
 
-      <div className={`md:hidden bg-gray-100 px-4 pb-4 transition-all duration-300 ${isMobileMenuOpen ? "block" : "hidden"}`}>
+      <div
+        className={`md:hidden bg-gray-100 px-4 pb-4 transition-all duration-300 ${isMobileMenuOpen ? "block" : "hidden"}`}
+      >
         <ul className="flex flex-col gap-4 text-primary-dark">
-          <li className="link"><Link to="/">Home</Link></li>
-          <li className="link"><Link to="/about">About</Link></li>
-          <li className="link"><Link to="/faqs">FAQs</Link></li>
-          <li className="link"><Link to="/contact">Contact</Link></li>
+          <li className="link">
+            <Link to="/">Home</Link>
+          </li>
+          <li className="link">
+            <Link to="/about">About</Link>
+          </li>
+          <li className="link">
+            <Link to="/faqs">FAQs</Link>
+          </li>
+          <li className="link">
+            <Link to="/contact">Contact</Link>
+          </li>
         </ul>
         <div className="mt-4 flex justify-center text-center">
           {user ? (

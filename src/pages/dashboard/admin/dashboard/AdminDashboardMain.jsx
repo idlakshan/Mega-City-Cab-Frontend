@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { Bar, Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -45,31 +45,31 @@ const AdminDashboardMain = () => {
       ]
     : [];
 
-  const paymentsData = {
-    labels: Object.keys(last7DaysData?.data?.paymentsLast7Days || {}).reverse(),
-    datasets: [
-      {
-        label: 'Total Payments (LKR)',
-        data: Object.values(last7DaysData?.data?.paymentsLast7Days || {}).reverse(),
-        backgroundColor: 'rgba(75, 192, 192, 0.6)',
-        borderColor: 'rgba(75, 192, 192, 1)',
-        borderWidth: 1,
-      },
-    ],
-  };
+const paymentsData = {
+  labels: Object.keys(last7DaysData?.data || {}).reverse(),
+  datasets: [
+    {
+      label: 'Total Payments (LKR)',
+      data: Object.values(last7DaysData?.data || {}).reverse(),
+      backgroundColor: 'rgba(75, 192, 192, 0.6)',
+      borderColor: 'rgba(75, 192, 192, 1)',
+      borderWidth: 1,
+    },
+  ],
+};
 
-  const bookingsData = {
-    labels: Object.keys(last7DaysData?.data?.bookingsLast7Days || {}).reverse(),
-    datasets: [
-      {
-        label: 'Recent Bookings',
-        data: Object.values(last7DaysData?.data?.bookingsLast7Days || {}).reverse(),
-        borderColor: 'rgba(153, 102, 255, 1)',
-        borderWidth: 2,
-        fill: false,
-      },
-    ],
-  };
+const bookingsData = {
+  labels: Object.keys(last7DaysData?.data || {}).reverse(),
+  datasets: [
+    {
+      label: 'Recent Bookings',
+      data: Object.values(last7DaysData?.data || {}).reverse(),
+      borderColor: 'rgba(153, 102, 255, 1)',
+      borderWidth: 2,
+      fill: false,
+    },
+  ],
+};
 
   return (
     <>

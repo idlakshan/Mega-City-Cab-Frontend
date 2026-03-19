@@ -1,42 +1,47 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
-import { useGetAllBookingsQuery, useUpdateBookingMutation } from "../redux/features/booking/bookingApi";
-import { useDispatch } from "react-redux";
+import {
+  useGetAllBookingsQuery,
+  useUpdateBookingMutation,
+} from "../redux/features/booking/bookingApi";
 import { toast } from "react-toastify";
 
 const OngoingBookingsTable = () => {
-  const {data: bookingData,isLoading: isBookingLoading,isError: isBookingError,refetch,} = useGetAllBookingsQuery();
-  const[updateBooking]=useUpdateBookingMutation();
-  const dispatch=useDispatch();
+  const {
+    data: bookingData,
+    isLoading: isBookingLoading,
+    isError: isBookingError,
+  } = useGetAllBookingsQuery();
+  const [updateBooking] = useUpdateBookingMutation();
 
   const [searchTerm, setSearchTerm] = useState("");
 
-  const ongoingBookings = bookingData?.data?.bookings?.filter(
-    (booking) => booking.status === "InProgress"
-  ) || [];
+  const ongoingBookings =
+    bookingData?.data.filter((booking) => booking.status === "InProgress") ||
+    [];
 
   console.log(ongoingBookings);
-  
 
- 
-  const filteredBookings = ongoingBookings.filter((booking) =>
-    booking.bookingId.toString().includes(searchTerm.toLowerCase()) ||
-    booking.car.carNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    booking.driver.driverName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    booking.pickupLocation.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    booking.dropLocation.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredBookings = ongoingBookings.filter(
+    (booking) =>
+      booking.bookingId.toString().includes(searchTerm.toLowerCase()) ||
+      booking.car.carNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      booking.driver.driverName
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      booking.pickupLocation.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      booking.dropLocation.toLowerCase().includes(searchTerm.toLowerCase()),
   );
-
 
   const handleStatusChange = async (bookingId, newStatus) => {
     try {
-        const result = await updateBooking({ bookingId, status: newStatus }).unwrap();
-        toast.success(`Booking ID ${bookingId} updated to ${newStatus}`);
+      await updateBooking({ bookingId, status: newStatus }).unwrap();
+      toast.success(`Booking ID ${bookingId} updated to ${newStatus}`);
     } catch (error) {
-        toast.error('Failed to update booking. Try again!');
+      console.log(error);
+      toast.error("Failed to update booking. Try again!");
     }
-};
-
+  };
 
   if (isBookingLoading) {
     return <div>Loading...</div>;
@@ -87,7 +92,9 @@ const OngoingBookingsTable = () => {
                     <div className="font-semibold text-left">Status</div>
                   </th>
                   <th className="p-2 whitespace-nowrap">
-                    <div className="font-semibold text-left">Pickup Location</div>
+                    <div className="font-semibold text-left">
+                      Pickup Location
+                    </div>
                   </th>
                   <th className="p-2 whitespace-nowrap">
                     <div className="font-semibold text-left">Drop Location</div>
@@ -99,24 +106,36 @@ const OngoingBookingsTable = () => {
                 {filteredBookings.map((booking) => (
                   <tr key={booking.bookingId}>
                     <td className="p-2 whitespace-nowrap">
-                      <div className="font-medium text-primary-black">{booking.bookingId}</div>
+                      <div className="font-medium text-primary-black">
+                        {booking.bookingId}
+                      </div>
                     </td>
                     <td className="p-2 whitespace-nowrap">
-                      <div className="text-left text-primary-black">{booking.bookingDateTime}</div>
+                      <div className="text-left text-primary-black">
+                        {booking.bookingDateTime}
+                      </div>
                     </td>
                     <td className="p-2 whitespace-nowrap">
-                      <div className="text-left text-primary-black">{booking.car.carName}</div>
+                      <div className="text-left text-primary-black">
+                        {booking.car.carName}
+                      </div>
                     </td>
                     <td className="p-2 whitespace-nowrap">
-                      <div className="text-left text-primary-black">{booking.car.carNumber}</div>
+                      <div className="text-left text-primary-black">
+                        {booking.car.carNumber}
+                      </div>
                     </td>
                     <td className="p-2 whitespace-nowrap">
-                      <div className="text-left text-primary-black">{booking.driver.driverName}</div>
+                      <div className="text-left text-primary-black">
+                        {booking.driver.driverName}
+                      </div>
                     </td>
                     <td className="p-2 whitespace-nowrap">
                       <select
                         value={booking.status}
-                        onChange={(e) => handleStatusChange(booking.bookingId, e.target.value)}
+                        onChange={(e) =>
+                          handleStatusChange(booking.bookingId, e.target.value)
+                        }
                         className={`px-2 py-1 rounded-full text-sm outline-none ${booking.status === "InProgress" ? "bg-yellow-100 text-yellow-800" : "bg-green-100 text-green-800"}`}
                       >
                         <option value="InProgress">InProgress</option>
@@ -125,10 +144,14 @@ const OngoingBookingsTable = () => {
                       </select>
                     </td>
                     <td className="p-2 whitespace-nowrap">
-                      <div className="text-left text-primary-black">{booking.pickupLocation}</div>
+                      <div className="text-left text-primary-black">
+                        {booking.pickupLocation}
+                      </div>
                     </td>
                     <td className="p-2 whitespace-nowrap">
-                      <div className="text-left text-primary-black">{booking.dropLocation}</div>
+                      <div className="text-left text-primary-black">
+                        {booking.dropLocation}
+                      </div>
                     </td>
                   </tr>
                 ))}

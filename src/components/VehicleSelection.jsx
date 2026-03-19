@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useGetCategoryQuery } from '../redux/features/category/categoryApi';
 import { setSelectedCategoryDetails, setSelectedCategoryPrice } from '../redux/features/checkout/checkout';
@@ -17,7 +17,7 @@ const VehicleSelection = () => {
   const dispatch = useDispatch();
 
   const { data: response, isLoading, error } = useGetCategoryQuery();
-  const categories = response?.data?.categories || [];
+  const categories = response?.data || [];
 
   const selectedCategoryDetails = categories.find((c) => c.name === selectedCategory) || null;
 
@@ -32,8 +32,8 @@ const VehicleSelection = () => {
     dispatch(setSelectedCategoryPrice(totalPrice.toFixed(2))); 
   }, [selectedCategory, distance, dispatch, selectedCategoryDetails]);
 
+ 
   const handleCategoryClick = (category) => {
-   // console.log('Selected Category:', category); 
     setSelectedCategory(category.name);
   
 

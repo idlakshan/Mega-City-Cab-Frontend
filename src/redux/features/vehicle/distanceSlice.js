@@ -1,8 +1,7 @@
-
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 const distanceSlice = createSlice({
-  name: 'distance',
+  name: "distance",
   initialState: {
     value: null,
   },

@@ -1,17 +1,19 @@
-import React, { useState } from 'react';
-import { FaEdit } from 'react-icons/fa';
-import { AiOutlineSearch } from 'react-icons/ai';
-import { Link } from 'react-router-dom';
+import { useState } from "react";
+import { FaEdit } from "react-icons/fa";
+import { AiOutlineSearch } from "react-icons/ai";
+import { Link } from "react-router-dom";
+import PropTypes from "prop-types";
 
 const DriverTable = ({ drivers, handleDelete }) => {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
 
-  const filteredDrivers = drivers.filter((driver) =>
-    driver.driverName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    driver.driverNic.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    driver.driverEmail.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    driver.driverContact.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    driver.status.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredDrivers = drivers.filter(
+    (driver) =>
+      driver.driverName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      driver.driverNic.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      driver.driverEmail.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      driver.driverContact.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      driver.status.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   // console.log(drivers)
@@ -69,21 +71,29 @@ const DriverTable = ({ drivers, handleDelete }) => {
                 {filteredDrivers.map((driver) => (
                   <tr key={driver.driverId}>
                     <td className="p-2 whitespace-nowrap">
-                      <div className="font-medium text-primary-black">{driver.driverName}</div>
+                      <div className="font-medium text-primary-black">
+                        {driver.driverName}
+                      </div>
                     </td>
                     <td className="p-2 whitespace-nowrap">
-                      <div className="text-left text-primary-black">{driver.driverNic}</div>
+                      <div className="text-left text-primary-black">
+                        {driver.driverNic}
+                      </div>
                     </td>
                     <td className="p-2 whitespace-nowrap">
-                      <div className="text-left text-primary-black">{driver.driverEmail}</div>
+                      <div className="text-left text-primary-black">
+                        {driver.driverEmail}
+                      </div>
                     </td>
                     <td className="p-2 whitespace-nowrap">
-                      <div className="text-left text-primary-black">{driver.driverContact}</div>
+                      <div className="text-left text-primary-black">
+                        {driver.driverContact}
+                      </div>
                     </td>
                     <td className="p-2 whitespace-nowrap">
                       <div className="flex items-center">
                         <img
-                          src={`http://localhost:8080/api/v1/uploads/driver/${driver.licenseImage}`}
+                          src={driver.licenseImage}
                           alt="License"
                           className="rounded-sm w-10 h-10"
                         />
@@ -92,12 +102,13 @@ const DriverTable = ({ drivers, handleDelete }) => {
                     <td className="p-2 whitespace-nowrap">
                       <div className="text-left">
                         <span
-                          className={`px-2 py-1 rounded-full text-sm ${driver.status === 'Available'
-                            ? 'bg-green-100 text-green-800'
-                            : driver.status === 'Absent'
-                              ? 'bg-red-100 text-red-800'
-                              : 'bg-yellow-100 text-yellow-800'
-                            }`}
+                          className={`px-2 py-1 rounded-full text-sm ${
+                            driver.status === "Available"
+                              ? "bg-green-100 text-green-800"
+                              : driver.status === "Absent"
+                                ? "bg-red-100 text-red-800"
+                                : "bg-yellow-100 text-yellow-800"
+                          }`}
                         >
                           {driver.status}
                         </span>
@@ -105,7 +116,7 @@ const DriverTable = ({ drivers, handleDelete }) => {
                     </td>
                     <td className="p-2 whitespace-nowrap">
                       <div className="text-left">
-                        {driver.status === 'Assigned' ? (
+                        {driver.status === "Assigned" ? (
                           <span className="text-gray-400 cursor-not-allowed">
                             <FaEdit className="inline-block" /> Edit
                           </span>
@@ -123,18 +134,21 @@ const DriverTable = ({ drivers, handleDelete }) => {
                     <td className="p-2 whitespace-nowrap">
                       <div className="text-left">
                         <button
-                          onClick={() => driver.status !== 'Assigned' && handleDelete(driver.driverId)}
-                          disabled={driver.status === 'Assigned'}
-                          className={`transition-colors ${driver.status === 'Assigned'
-                              ? "text-gray-400 cursor-not-allowed" 
-                              : "text-red-500 hover:text-red-700"   
-                            }`}
+                          onClick={() =>
+                            driver.status !== "Assigned" &&
+                            handleDelete(driver.driverId)
+                          }
+                          disabled={driver.status === "Assigned"}
+                          className={`transition-colors ${
+                            driver.status === "Assigned"
+                              ? "text-gray-400 cursor-not-allowed"
+                              : "text-red-500 hover:text-red-700"
+                          }`}
                         >
                           Delete
                         </button>
                       </div>
                     </td>
-
                   </tr>
                 ))}
               </tbody>
@@ -144,6 +158,22 @@ const DriverTable = ({ drivers, handleDelete }) => {
       </div>
     </section>
   );
+};
+
+DriverTable.propTypes = {
+  drivers: PropTypes.arrayOf(
+    PropTypes.shape({
+      driverId: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
+        .isRequired,
+      driverName: PropTypes.string.isRequired,
+      driverNic: PropTypes.string.isRequired,
+      driverEmail: PropTypes.string.isRequired,
+      driverContact: PropTypes.string.isRequired,
+      licenseImage: PropTypes.string.isRequired,
+      status: PropTypes.oneOf(["Available", "Absent", "Assigned"]).isRequired,
+    }),
+  ).isRequired,
+  handleDelete: PropTypes.func.isRequired,
 };
 
 export default DriverTable;

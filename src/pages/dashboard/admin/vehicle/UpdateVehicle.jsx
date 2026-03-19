@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { FaTimes, FaCar, FaList, FaIdBadge, FaImage, FaCheckCircle } from 'react-icons/fa';
@@ -18,8 +18,8 @@ const UpdateVehicle = () => {
 
   const { data: response, isLoading: isCategoriesLoading, error: fetchError } = useGetCategoryNamesQuery();
   const { data: vehicleData, isLoading: isVehicleLoading, error: vehicleError } = useGetCarByIdQuery(id);
-  const [addCar, { isLoading: isAdding, error: addError }] = useAddCarMutation();
-  const [updateCar, { isLoading: isUpdating, error: updateError }] = useUpdateCarMutation();
+  const [addCar, { isLoading: isAdding }] = useAddCarMutation();
+  const [updateCar, { isLoading: isUpdating}] = useUpdateCarMutation();
 
   useEffect(() => {
     if (response && response.data && response.data.categories) {
@@ -38,22 +38,10 @@ const UpdateVehicle = () => {
         carName,
         province,
         carNumber: number,
-        carImage: null,
+        carImage,
         status,
       });
 
-
-      if (carImage) {
-        fetch(`http://localhost:8080/api/v1/uploads/vehicles/${carImage}`)
-          .then((response) => response.blob())
-          .then((blob) => {
-            const file = new File([blob], carImage, { type: blob.type });
-            formik.setFieldValue('carImage', file);
-          })
-          .catch((error) => {
-            console.error('Error fetching image:', error);
-          });
-      }
     }
   }, [vehicleData]);
 

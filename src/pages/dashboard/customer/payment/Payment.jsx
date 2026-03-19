@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import { Line } from 'react-chartjs-2';
+import  { useEffect, useState } from 'react';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -10,7 +9,7 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
-import { FiDownload, FiFilter, FiCalendar } from 'react-icons/fi';
+import { FiDownload} from 'react-icons/fi';
 import { useGetBookingDetailsQuery } from '../../../../redux/features/booking/bookingApi';
 import { toast } from 'react-toastify';
 
@@ -32,9 +31,10 @@ const MyPayments = () => {
   const [endDate, setEndDate] = useState('');
   const [searchBookingId, setSearchBookingId] = useState('');
 
+
   useEffect(() => {
     if (bookingDetails && bookingDetails.data) {
-      const paymentData = bookingDetails.data.data.map(booking => ({
+      const paymentData = bookingDetails.data.map(booking => ({
         id: booking.payment.paymentId,
         date: booking.payment.paymentDate,
         amount: booking.payment.amount,

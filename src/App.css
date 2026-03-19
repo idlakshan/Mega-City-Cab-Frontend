@@ -1,43 +1,38 @@
 @import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;800&family=Poppins:wght@400;500;600;700&display=swap");
 
-
 :root {
-    --primary-yellow: #FCC737;
-    --primary-color-dark: #203145;
-    --primary-color-light: #EDF1F2;
-    --text-dark: #0f172a;
-    --max-width-1450: 1450px;
-    --max-width-1200: 1200px;
-    --max-width-900: 900px;
-  
-  }
- 
-  
+  --primary-yellow: #fcc737;
+  --primary-color-dark: #203145;
+  --primary-color-light: #edf1f2;
+  --text-dark: #0f172a;
+  --max-width-1450: 1450px;
+  --max-width-1200: 1200px;
+  --max-width-900: 900px;
+}
+
 * {
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
- 
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
 }
 
 .link:hover {
-    color: var(--primary-yellow);
+  color: var(--primary-yellow);
 }
 
-.section_container{
-    max-width: var(--max-width-1450);
-    /* padding-top: 120px; */
-    margin: auto;
-  
-  }
+.section_container {
+  max-width: var(--max-width-1450);
+  /* padding-top: 120px; */
+  margin: auto;
+}
 
-  .section_container_feature{
-    max-width: var(--max-width-1450);
-    margin: auto;
-    /* border: 1px solid red; */
-  }
+.section_container_feature {
+  max-width: var(--max-width-1450);
+  margin: auto;
+  /* border: 1px solid red; */
+}
 
-  /* App.css */
+/* App.css */
 .booking-container {
   max-width: 600px;
   margin: 0 auto;
