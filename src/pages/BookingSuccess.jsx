@@ -1,17 +1,18 @@
 import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { getBaseUrl } from "../utils/BaseURL";
+
 
 function Success() {
   const navigate = useNavigate();
   const bookingId = localStorage.getItem("bookingId");
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("accessToken");
   const storedCar = JSON.parse(localStorage.getItem("assignedCar"));
   const storedDriver = JSON.parse(localStorage.getItem("assignedDriver"));
   const invoiceDownloaded = useRef(false);
 
-  console.log(storedCar);
-  
+  const baseUrl = getBaseUrl();
 
   useEffect(() => {
     if (!invoiceDownloaded.current) {
@@ -29,8 +30,9 @@ function Success() {
       if (!bookingId) {
         throw new Error("Booking ID not found");
       }
+      
       const response = await fetch(
-        `http://localhost:8080/api/v1/generate-invoice?bookingId=${bookingId}`,
+        `${baseUrl}/invoice/generate?bookingId=${bookingId}`,
         {
           method: "GET",
           headers: {
@@ -39,6 +41,7 @@ function Success() {
           credentials: "include",
         },
       );
+      
       if (!response.ok) {
         throw new Error("Failed to fetch invoice");
       }

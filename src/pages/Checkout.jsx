@@ -4,6 +4,8 @@ import { FiCalendar, FiMapPin } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { loadStripe } from "@stripe/stripe-js";
 import { toast } from "sonner";
+import { getBaseUrl } from "../utils/BaseURL";
+
 
 function Checkout() {
   const checkoutData = useSelector((state) => state.checkout.checkoutData);
@@ -24,6 +26,8 @@ function Checkout() {
 
   const navigate = useNavigate();
   const [showCarImage, setShowCarImage] = useState(false);
+  
+  const baseUrl = getBaseUrl(); 
 
   console.log("Selected Category Name:", assignedCar);
   console.log("Selected Category Icon:", assignedDriver);
@@ -59,7 +63,7 @@ function Checkout() {
         throw new Error("Authentication token not found. Please log in.");
 
       const response = await fetch(
-        "http://localhost:8081/api/v2/checkout/create-session",
+        `${baseUrl}/checkout/create-session`,
         {
           method: "POST",
           headers: {
@@ -69,8 +73,8 @@ function Checkout() {
           body: JSON.stringify({
             amount: totalPrice,
             currency: "LKR",
-            successUrl: "http://localhost:5173/success",
-            cancelUrl: "http://localhost:5173/cancel",
+            successUrl: `${window.location.origin}/success`,
+            cancelUrl: `${window.location.origin}/cancel`, 
             userId: id,
             carId: assignedCar.carId,
             driverId: assignedDriver.driverId,

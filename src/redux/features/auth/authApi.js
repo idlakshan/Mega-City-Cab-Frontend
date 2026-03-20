@@ -2,9 +2,11 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { logout } from "./authSlice";
 import { getBaseUrl } from "../../../utils/BaseURL";
 
+const baseUrl = getBaseUrl();
+
 // Base query that adds Authorization header from localStorage
 const baseQuery = fetchBaseQuery({
-  baseUrl: getBaseUrl(),
+  baseUrl: baseUrl,
   prepareHeaders: (headers) => {
     const token = localStorage.getItem("accessToken");
     if (token) headers.set("Authorization", `Bearer ${token}`);
@@ -21,9 +23,8 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
     const refreshToken = localStorage.getItem("refreshToken");
 
     if (refreshToken) {
-      // call refresh WITHOUT Authorization header
       const refreshResult = await fetch(
-        "http://localhost:8081/api/v2/auth/refresh",
+        `${baseUrl}/auth/refresh`,
         {
           method: "POST",
           headers: {
@@ -34,10 +35,9 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
       ).then((res) => res.json());
 
       if (refreshResult.accessToken) {
-        // save new token
+
         localStorage.setItem("accessToken", refreshResult.accessToken);
 
-        // retry original request
         result = await baseQuery(args, api, extraOptions);
       } else {
         api.dispatch(logout());

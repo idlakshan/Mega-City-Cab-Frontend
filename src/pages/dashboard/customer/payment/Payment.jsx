@@ -1,4 +1,4 @@
-import  { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -8,10 +8,11 @@ import {
   Title,
   Tooltip,
   Legend,
-} from 'chart.js';
-import { FiDownload} from 'react-icons/fi';
-import { useGetBookingDetailsQuery } from '../../../../redux/features/booking/bookingApi';
-import { toast } from 'react-toastify';
+} from "chart.js";
+import { FiDownload } from "react-icons/fi";
+import { useGetBookingDetailsQuery } from "../../../../redux/features/booking/bookingApi";
+import { toast } from "react-toastify";
+import { getBaseUrl } from "../../../../utils/BaseURL";
 
 ChartJS.register(
   CategoryScale,
@@ -20,21 +21,26 @@ ChartJS.register(
   LineElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
 );
 
 const MyPayments = () => {
-  const { data: bookingDetails, isLoading, isError } = useGetBookingDetailsQuery();
+  const {
+    data: bookingDetails,
+    isLoading,
+    isError,
+  } = useGetBookingDetailsQuery();
   const [payments, setPayments] = useState([]);
   const [filteredPayments, setFilteredPayments] = useState([]);
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
-  const [searchBookingId, setSearchBookingId] = useState('');
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [searchBookingId, setSearchBookingId] = useState("");
 
+  const baseUrl = getBaseUrl();
 
   useEffect(() => {
     if (bookingDetails && bookingDetails.data) {
-      const paymentData = bookingDetails.data.map(booking => ({
+      const paymentData = bookingDetails.data.map((booking) => ({
         id: booking.payment.paymentId,
         date: booking.payment.paymentDate,
         amount: booking.payment.amount,
@@ -69,22 +75,25 @@ const MyPayments = () => {
   const downloadInvoice = async (bookingId) => {
     try {
       if (!bookingId) {
-        throw new Error('Booking ID not found');
+        throw new Error("Booking ID not found");
       }
-      const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:8080/api/v1/generate-invoice?bookingId=${bookingId}`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`,
+      const token = localStorage.getItem("accessToken");
+      const response = await fetch(
+        `${baseUrl}/invoice/generate?bookingId=${bookingId}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          credentials: "include",
         },
-        credentials: 'include',
-      });
+      );
       if (!response.ok) {
-        throw new Error('Failed to fetch invoice');
+        throw new Error("Failed to fetch invoice");
       }
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = url;
       a.download = `invoice-${bookingId}.pdf`;
       document.body.appendChild(a);
@@ -92,7 +101,7 @@ const MyPayments = () => {
       a.remove();
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      console.error('Invoice Download Error:', error);
+      console.error("Invoice Download Error:", error);
       toast.error(`Failed to download invoice: ${error.message}`);
     }
   };
@@ -103,7 +112,9 @@ const MyPayments = () => {
   return (
     <>
       <div className="bg-white p-6 rounded-lg shadow-md">
-        <h2 className="text-xl font-semibold text-primary-black mb-4">Payment History</h2>
+        <h2 className="text-xl font-semibold text-primary-black mb-4">
+          Payment History
+        </h2>
         <div className="mb-6 flex flex-wrap gap-4">
           <input
             type="text"
@@ -129,13 +140,27 @@ const MyPayments = () => {
           <table className="min-w-full bg-white">
             <thead>
               <tr>
-                <th className="py-2 px-4 border-b border-gray-200 text-left text-sm text-gray-600">Booking Id</th>
-                <th className="py-2 px-4 border-b border-gray-200 text-left text-sm text-gray-600">Booking Status</th>
-                <th className="py-2 px-4 border-b border-gray-200 text-left text-sm text-gray-600">Payment Date</th>
-                <th className="py-2 px-4 border-b border-gray-200 text-left text-sm text-gray-600">Amount (LKR)</th>
-                <th className="py-2 px-4 border-b border-gray-200 text-left text-sm text-gray-600">Payment Method</th>
-                <th className="py-2 px-4 border-b border-gray-200 text-left text-sm text-gray-600">Status</th>
-                <th className="py-2 px-4 border-b border-gray-200 text-left text-sm text-gray-600">Action</th>
+                <th className="py-2 px-4 border-b border-gray-200 text-left text-sm text-gray-600">
+                  Booking Id
+                </th>
+                <th className="py-2 px-4 border-b border-gray-200 text-left text-sm text-gray-600">
+                  Booking Status
+                </th>
+                <th className="py-2 px-4 border-b border-gray-200 text-left text-sm text-gray-600">
+                  Payment Date
+                </th>
+                <th className="py-2 px-4 border-b border-gray-200 text-left text-sm text-gray-600">
+                  Amount (LKR)
+                </th>
+                <th className="py-2 px-4 border-b border-gray-200 text-left text-sm text-gray-600">
+                  Payment Method
+                </th>
+                <th className="py-2 px-4 border-b border-gray-200 text-left text-sm text-gray-600">
+                  Status
+                </th>
+                <th className="py-2 px-4 border-b border-gray-200 text-left text-sm text-gray-600">
+                  Action
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -146,12 +171,13 @@ const MyPayments = () => {
                   </td>
                   <td className="py-3 px-4 border-b border-gray-200 text-sm text-gray-700">
                     <span
-                      className={`px-2 py-1 rounded-full text-sm font-semibold ${payment.bookingStatus === 'Completed'
-                          ? 'bg-green-100 text-green-700'
-                          : payment.bookingStatus === 'InProgress'
-                            ? 'bg-yellow-100 text-yellow-600'
-                            : 'bg-red-100 text-red-700'
-                        }`}
+                      className={`px-2 py-1 rounded-full text-sm font-semibold ${
+                        payment.bookingStatus === "Completed"
+                          ? "bg-green-100 text-green-700"
+                          : payment.bookingStatus === "InProgress"
+                            ? "bg-yellow-100 text-yellow-600"
+                            : "bg-red-100 text-red-700"
+                      }`}
                     >
                       {payment.bookingStatus}
                     </span>
@@ -167,10 +193,11 @@ const MyPayments = () => {
                   </td>
                   <td className="py-3 px-4 border-b border-gray-200">
                     <span
-                      className={`px-2 py-1 rounded-full text-sm font-semibold ${payment.status === 'Success'
-                          ? 'bg-green-100 text-green-700'
-                          : 'bg-red-100 text-red-700'
-                        }`}
+                      className={`px-2 py-1 rounded-full text-sm font-semibold ${
+                        payment.status === "Success"
+                          ? "bg-green-100 text-green-700"
+                          : "bg-red-100 text-red-700"
+                      }`}
                     >
                       {payment.status}
                     </span>
@@ -178,15 +205,15 @@ const MyPayments = () => {
                   <td className="py-3 px-4 border-b border-gray-200">
                     <button
                       onClick={() => downloadInvoice(payment.bookingId)}
-                      disabled={payment.bookingStatus === 'Canceled'}
-                      className={`bg-primary-yellow text-primary-black font-semibold py-1 px-3 rounded transition-colors flex items-center ${payment.bookingStatus === 'Canceled'
-                          ? 'opacity-50 cursor-not-allowed'
-                          : 'hover:bg-yellow-500'
-                        }`}
+                      disabled={payment.bookingStatus === "Canceled"}
+                      className={`bg-primary-yellow text-primary-black font-semibold py-1 px-3 rounded transition-colors flex items-center ${
+                        payment.bookingStatus === "Canceled"
+                          ? "opacity-50 cursor-not-allowed"
+                          : "hover:bg-yellow-500"
+                      }`}
                     >
                       <FiDownload className="mr-2" /> Receipt
                     </button>
-
                   </td>
                 </tr>
               ))}
