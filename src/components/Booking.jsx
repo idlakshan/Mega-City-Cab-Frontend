@@ -33,7 +33,6 @@ import {
   useLazyFetchRouteQuery,
 } from "../redux/features/booking/bookingApi";
 
-
 const startIcon = new L.Icon({
   iconUrl: greenMarker,
   shadowUrl: markerShadow,
@@ -41,6 +40,7 @@ const startIcon = new L.Icon({
   iconAnchor: [12, 41],
   popupAnchor: [0, -41],
 });
+
 const endIcon = new L.Icon({
   iconUrl: redMarker,
   shadowUrl: markerShadow,
@@ -48,7 +48,6 @@ const endIcon = new L.Icon({
   iconAnchor: [12, 41],
   popupAnchor: [0, -41],
 });
-
 
 const validationSchema = Yup.object({
   pickLocation: Yup.string()
@@ -96,14 +95,12 @@ const Booking = () => {
   const [duration, setDuration] = useState(null);
   const [error, setError] = useState(null);
 
-
   const [createBooking] = useCreateBookingMutation();
   const [triggerFetchCoordinates] = useLazyFetchCoordinatesQuery();
   const [triggerFetchRoute] = useLazyFetchRouteQuery();
 
   const [debouncedPickLocation, setDebouncedPickLocation] = useState("");
   const [debouncedDropLocation, setDebouncedDropLocation] = useState("");
-
 
   const formik = useFormik({
     initialValues: {
@@ -155,7 +152,6 @@ const Booking = () => {
     };
   }, [formik.values.pickLocation, formik.values.dropLocation]);
 
-
   useEffect(() => {
     const calculateRoute = async () => {
       if (!debouncedPickLocation || !debouncedDropLocation) {
@@ -181,7 +177,7 @@ const Booking = () => {
           throw new Error("Invalid Sri Lankan city names");
         }
 
-        const start = startRes.results[0].geometry; 
+        const start = startRes.results[0].geometry;
         const end = endRes.results[0].geometry;
 
         setStartCoords(start);
@@ -248,7 +244,7 @@ const Booking = () => {
 
   return (
     <>
-      <div className="absolute top-[60%] sm:top-[65%] md:top-[60%] lg:top-[60%] xl:top-[82%] 2xl:top-[90%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white py-4 px-6 rounded-lg shadow-lg w-11/12 sm:w-10/12 md:w-9/12 lg:w-8/12 xl:w-8/12 border-2 border-custom-opacity">
+      <div className="absolute top-[60%] sm:top-[65%] md:top-[60%] lg:top-[60%] xl:top-[82%] 2xl:top-[90%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white py-4 px-4 sm:py-6 sm:px-6 rounded-lg shadow-lg w-[95%] sm:w-11/12 md:w-10/12 lg:w-9/12 xl:w-8/12 2xl:w-7/12 border-2 border-custom-opacity max-h-[90vh] overflow-y-auto">
         <VehicleSelection distance={distance} setDistance={setDistance} />
 
         <form onSubmit={formik.handleSubmit}>
@@ -261,15 +257,15 @@ const Booking = () => {
                 value={formik.values.pickLocation}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                className="w-full h-12 px-4 border border-gray-300 rounded-md outline-none focus:outline-none"
+                className="w-full h-12 px-4 border border-gray-300 rounded-md outline-none focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
               />
               {formik.touched.pickLocation && formik.errors.pickLocation && (
-                <p className="text-red-500 text-sm !mt-1">
+                <p className="text-red-500 text-xs sm:text-sm !mt-1">
                   {formik.errors.pickLocation}
                 </p>
               )}
             </div>
-            <RiArrowRightLine className="w-6 h-6 text-gray-500 hidden sm:block" />
+            <RiArrowRightLine className="w-5 h-5 sm:w-6 sm:h-6 text-gray-500 hidden sm:block flex-shrink-0" />
             <div className="w-full sm:flex-1">
               <input
                 type="text"
@@ -278,38 +274,38 @@ const Booking = () => {
                 value={formik.values.dropLocation}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                className="w-full h-12 px-4 border border-gray-300 rounded-md outline-none focus:outline-none"
+                className="w-full h-12 px-4 border border-gray-300 rounded-md outline-none focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
               />
               {formik.touched.dropLocation && formik.errors.dropLocation && (
-                <p className="text-red-500 text-sm !mt-0">
+                <p className="text-red-500 text-xs sm:text-sm !mt-1">
                   {formik.errors.dropLocation}
                 </p>
               )}
             </div>
-            <div className="w-full sm:w-auto">
+            <div className="w-full sm:w-auto sm:min-w-[200px]">
               <input
                 type="datetime-local"
                 name="dateTime"
                 value={formik.values.dateTime}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                className="w-full h-12 px-4 border border-gray-300 rounded-md outline-none focus:outline-none"
+                className="w-full h-12 px-4 border border-gray-300 rounded-md outline-none focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
               />
               {formik.touched.dateTime && formik.errors.dateTime && (
-                <p className="text-red-500 text-sm !mt-0">
+                <p className="text-red-500 text-xs sm:text-sm !mt-1">
                   {formik.errors.dateTime}
                 </p>
               )}
             </div>
           </div>
 
-          <div className="flex flex-col lg:flex-row space-y-4 lg:space-y-0 lg:space-x-6">
+          <div className="flex flex-col lg:flex-row space-y-6 lg:space-y-0 lg:space-x-6">
             <div className="flex-1 flex flex-col space-y-4">
-              <div className="w-full h-14 flex items-center border border-gray-300 rounded-md px-4">
+              <div className="w-full h-14 flex items-center border border-gray-300 rounded-md px-4 focus-within:ring-2 focus-within:ring-yellow-500">
                 <img
                   src="src/assets/flag.png"
                   alt="Sri Lanka Flag"
-                  className="w-8 h-8 mr-2"
+                  className="w-6 h-6 sm:w-8 sm:h-8 mr-2 flex-shrink-0"
                 />
                 <input
                   type="text"
@@ -318,12 +314,12 @@ const Booking = () => {
                   value={formik.values.phoneNumber}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  className="flex-1 h-full outline-none"
+                  className="flex-1 h-full outline-none text-sm sm:text-base"
                   disabled={formik.values.fillDetails}
                 />
               </div>
               {formik.touched.phoneNumber && formik.errors.phoneNumber && (
-                <p className="text-red-500 text-sm !mt-0">
+                <p className="text-red-500 text-xs sm:text-sm !mt-0">
                   {formik.errors.phoneNumber}
                 </p>
               )}
@@ -335,11 +331,11 @@ const Booking = () => {
                 value={formik.values.name}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                className="w-full h-14 px-4 border border-gray-300 rounded-md outline-none focus:outline-none"
+                className="w-full h-14 px-4 border border-gray-300 rounded-md outline-none focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-sm sm:text-base"
                 disabled={formik.values.fillDetails}
               />
               {formik.touched.name && formik.errors.name && (
-                <p className="text-red-500 text-sm !mt-0">
+                <p className="text-red-500 text-xs sm:text-sm !mt-0">
                   {formik.errors.name}
                 </p>
               )}
@@ -351,37 +347,39 @@ const Booking = () => {
                 value={formik.values.email}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                className="w-full h-14 px-4 border border-gray-300 rounded-md outline-none focus:outline-none"
+                className="w-full h-14 px-4 border border-gray-300 rounded-md outline-none focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-sm sm:text-base"
                 disabled={formik.values.fillDetails}
               />
               {formik.touched.email && formik.errors.email && (
-                <p className="text-red-500 text-sm !mt-0 ">
+                <p className="text-red-500 text-xs sm:text-sm !mt-0">
                   {formik.errors.email}
                 </p>
               )}
 
-              <label className="flex items-center space-x-2">
+              <label className="flex items-center space-x-2 cursor-pointer">
                 <input
                   type="checkbox"
                   name="fillDetails"
                   checked={formik.values.fillDetails}
                   onChange={handleCheckboxChange}
-                  className="w-5 h-5 text-primary-yellow border-gray-300 rounded focus:ring-0 checked:bg-yellow-500"
+                  className="w-4 h-4 sm:w-5 sm:h-5 text-primary-yellow border-gray-300 rounded focus:ring-0 checked:bg-yellow-500 cursor-pointer"
                 />
-                <span className="text-primary-black">Fill with my details</span>
+                <span className="text-primary-black text-sm sm:text-base">
+                  Fill with my details
+                </span>
               </label>
 
-              <p className="text-sm font-semibold text-primary-black pt-4">
+              <p className="text-xs sm:text-sm font-semibold text-primary-black pt-2">
                 Please note: a 5% service tax is applicable to all bookings.
               </p>
             </div>
-
             <div className="flex-1 flex flex-col">
-              <div className="w-full h-[250px] bg-gray-200 rounded-t-md flex items-center justify-center text-gray-500">
+              <div className="w-full h-[200px] sm:h-[220px] md:h-[250px] bg-gray-200 rounded-t-md flex items-center justify-center text-gray-500">
                 <MapContainer
                   center={[6.9271, 79.8612]}
                   zoom={10}
                   style={{ height: "100%", width: "100%" }}
+                  className="rounded-t-md"
                 >
                   <TileLayer
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -394,7 +392,6 @@ const Booking = () => {
                       icon={startIcon}
                     >
                       <Popup>
-                        {" "}
                         Start Location: {formik.values.pickLocation}
                       </Popup>
                     </Marker>
@@ -422,14 +419,16 @@ const Booking = () => {
                 </MapContainer>
               </div>
 
-              <div className="flex flex-col sm:flex-row justify-between items-center border px-10  border-gray-300 rounded-b-md p-4 bg-white shadow-sm">
-                <div className="flex items-center text-gray-700 space-x-2 mb-4 sm:mb-0">
-                  <RiMapPinLine className="w-8 h-8 text-gray-500" />
-                  <span>{distance ? `${distance.toFixed(2)} km` : "0 Km"}</span>
+              <div className="flex flex-col sm:flex-row justify-between items-center border border-gray-300 rounded-b-md p-3 sm:p-4 bg-white shadow-sm space-y-3 sm:space-y-0">
+                <div className="flex items-center text-gray-700 space-x-2 w-full sm:w-auto justify-center">
+                  <RiMapPinLine className="w-6 h-6 sm:w-8 sm:h-8 text-gray-500 flex-shrink-0" />
+                  <span className="text-sm sm:text-base">
+                    {distance ? `${distance.toFixed(2)} km` : "0 Km"}
+                  </span>
                 </div>
-                <div className="flex items-center text-gray-700 space-x-2">
-                  <RiTimeLine className="w-8 h-8 text-gray-500" />
-                  <span>
+                <div className="flex items-center text-gray-700 space-x-2 w-full sm:w-auto justify-center">
+                  <RiTimeLine className="w-6 h-6 sm:w-8 sm:h-8 text-gray-500 flex-shrink-0" />
+                  <span className="text-sm sm:text-base">
                     {duration
                       ? duration >= 60
                         ? `${(duration / 60).toFixed(2)} h`
@@ -438,16 +437,20 @@ const Booking = () => {
                   </span>
                 </div>
               </div>
-              <p className="text-red-500 text-sm mt-1">{error}</p>
 
+              {error && (
+                <p className="text-red-500 text-xs sm:text-sm mt-2">{error}</p>
+              )}
+
+              {/* Checkout Button */}
               <div className="flex justify-end mt-4">
                 <button
                   type="submit"
                   disabled={!formik.isValid || !formik.dirty}
-                  className={`bg-primary-yellow text-primary-black py-2 px-4 rounded-md text-lg shadow-lg ${
+                  className={`bg-primary-yellow text-primary-black py-2 px-4 sm:py-2 sm:px-6 rounded-md text-base sm:text-lg shadow-lg transition-all duration-200 ${
                     !formik.isValid || !formik.dirty
-                      ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                      : ""
+                      ? "bg-gray-300 text-gray-500 cursor-not-allowed opacity-50"
+                      : "hover:bg-yellow-600 hover:shadow-xl active:transform active:scale-95"
                   }`}
                 >
                   Checkout

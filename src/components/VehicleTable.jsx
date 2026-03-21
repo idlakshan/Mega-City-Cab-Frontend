@@ -65,7 +65,7 @@ const VehicleTable = ({ vehicles, categories, handleDelete }) => {
 
               <tbody className="text-sm divide-y divide-gray-100">
                 {filteredVehicles.map((vehicle) => (
-                  <tr key={vehicle.id}>
+                  <tr key={vehicle.vehicleId}>
                     <td className="p-2 whitespace-nowrap">
                       <div className="flex items-center">
                         <div className="w-10 h-10 flex-shrink-0 mr-2 sm:mr-3">
