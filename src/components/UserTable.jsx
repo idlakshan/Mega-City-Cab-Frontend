@@ -1,5 +1,4 @@
 import { useState } from "react";
-import PropTypes from "prop-types";
 import { AiOutlineSearch } from "react-icons/ai";
 
 const UserTable = ({ users, handleDelete }) => {
@@ -128,32 +127,5 @@ const UserTable = ({ users, handleDelete }) => {
   );
 };
 
-UserTable.propTypes = {
-  users: PropTypes.oneOfType([
-    PropTypes.arrayOf(
-      PropTypes.shape({
-        id: PropTypes.number.isRequired,
-        name: PropTypes.string,
-        nic: PropTypes.string,
-        email: PropTypes.string,
-        phone: PropTypes.string,
-        roles: PropTypes.arrayOf(PropTypes.string),
-      }),
-    ),
-    PropTypes.shape({
-      data: PropTypes.arrayOf(
-        PropTypes.shape({
-          id: PropTypes.number.isRequired,
-          name: PropTypes.string,
-          nic: PropTypes.string,
-          email: PropTypes.string,
-          phone: PropTypes.string,
-          roles: PropTypes.arrayOf(PropTypes.string),
-        }),
-      ),
-    }),
-  ]).isRequired,
-  handleDelete: PropTypes.func.isRequired,
-};
 
 export default UserTable;

@@ -1,7 +1,6 @@
 import { useSelector } from "react-redux";
 import { Navigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
-import PropTypes from "prop-types";
 
 const PrivateRoute = ({ children, role }) => {
   const { user } = useSelector((state) => state.auth);
@@ -24,12 +23,5 @@ const PrivateRoute = ({ children, role }) => {
   return children;
 };
 
-PrivateRoute.propTypes = {
-  children: PropTypes.node.isRequired,
-  role: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.arrayOf(PropTypes.string),
-  ]),
-};
 
 export default PrivateRoute;

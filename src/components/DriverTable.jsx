@@ -2,7 +2,7 @@ import { useState } from "react";
 import { FaEdit } from "react-icons/fa";
 import { AiOutlineSearch } from "react-icons/ai";
 import { Link } from "react-router-dom";
-import PropTypes from "prop-types";
+
 
 const DriverTable = ({ drivers, handleDelete }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -160,20 +160,5 @@ const DriverTable = ({ drivers, handleDelete }) => {
   );
 };
 
-DriverTable.propTypes = {
-  drivers: PropTypes.arrayOf(
-    PropTypes.shape({
-      driverId: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
-        .isRequired,
-      driverName: PropTypes.string.isRequired,
-      driverNic: PropTypes.string.isRequired,
-      driverEmail: PropTypes.string.isRequired,
-      driverContact: PropTypes.string.isRequired,
-      licenseImage: PropTypes.string.isRequired,
-      status: PropTypes.oneOf(["Available", "Absent", "Assigned"]).isRequired,
-    }),
-  ).isRequired,
-  handleDelete: PropTypes.func.isRequired,
-};
 
 export default DriverTable;

@@ -2,7 +2,6 @@ import{ useState } from 'react';
 import { FaEdit } from 'react-icons/fa';
 import { AiOutlineSearch } from "react-icons/ai";
 import { Link } from 'react-router-dom';
-import PropTypes from 'prop-types';
 
 const VehicleTable = ({ vehicles, categories, handleDelete }) => {
 
@@ -142,26 +141,6 @@ const VehicleTable = ({ vehicles, categories, handleDelete }) => {
       </div>
     </section>
   );
-};
-
-VehicleTable.propTypes = {
-  vehicles: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
-      carName: PropTypes.string.isRequired,
-      carNumber: PropTypes.string.isRequired,
-      categoryId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
-      carImage: PropTypes.string.isRequired,
-      status: PropTypes.oneOf(['Available', 'Booked']).isRequired,
-    })
-  ).isRequired,
-  categories: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
-      name: PropTypes.string.isRequired,
-    })
-  ).isRequired,
-  handleDelete: PropTypes.func.isRequired,
 };
 
 export default VehicleTable;

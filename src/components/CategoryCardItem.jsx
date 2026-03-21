@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { FaCheck } from "react-icons/fa";
-import PropTypes from "prop-types";
 
 const CategoryCardItem = ({ category, onUpdatePrice }) => {
   const [price, setPrice] = useState(category.price);
@@ -66,14 +65,6 @@ const CategoryCardItem = ({ category, onUpdatePrice }) => {
   );
 };
 
-CategoryCardItem.propTypes = {
-  category: PropTypes.shape({
-    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-    name: PropTypes.string.isRequired,
-    icon: PropTypes.string.isRequired,
-    price: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-  }).isRequired,
-  onUpdatePrice: PropTypes.func.isRequired,
-};
+
 
 export default CategoryCardItem;

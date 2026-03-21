@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useUpdateUserMutation } from "../redux/features/auth/authApi";
 import { toast } from "react-toastify";
-import PropTypes from "prop-types";
+
 
 const UpdateProfileModal = ({ isOpen, onClose, userData }) => {
   const [name, setName] = useState(userData?.name || "");
@@ -86,14 +86,5 @@ const UpdateProfileModal = ({ isOpen, onClose, userData }) => {
   );
 };
 
-UpdateProfileModal.propTypes = {
-  isOpen: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired,
-  userData: PropTypes.shape({
-    name: PropTypes.string,
-    email: PropTypes.string,
-    phone: PropTypes.string,
-  }).isRequired,
-};
 
 export default UpdateProfileModal;

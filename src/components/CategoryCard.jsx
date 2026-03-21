@@ -1,5 +1,4 @@
 import CategoryCardItem from "./CategoryCardItem";
-import PropTypes from "prop-types";
 
 const CategoryCard = ({ categories, onUpdatePrice }) => {
   return (
@@ -15,17 +14,5 @@ const CategoryCard = ({ categories, onUpdatePrice }) => {
   );
 };
 
-CategoryCard.propTypes = {
-  categories: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-      name: PropTypes.string.isRequired,
-      icon: PropTypes.string.isRequired,
-      price: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
-        .isRequired,
-    }),
-  ).isRequired,
-  onUpdatePrice: PropTypes.func.isRequired,
-};
 
 export default CategoryCard;
