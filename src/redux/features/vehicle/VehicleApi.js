@@ -25,7 +25,14 @@ const vehicleApi = createApi({
     }),
     getCarById: builder.query({
       query: (id) => ({
-        url: `/vehicle/${id}`,
+        url: `/car/${id}`,
+        method: "GET",
+      }),
+      providesTags: ["vehicle"],
+    }),
+    getCarwithCategoryById: builder.query({
+      query: (id) => ({
+        url: `/car/${id}/with-category`,
         method: "GET",
       }),
       providesTags: ["vehicle"],
@@ -40,7 +47,7 @@ const vehicleApi = createApi({
     }),
     updateCar: builder.mutation({
       query: ({ id, formData }) => ({
-        url: `/vehicle/${id}`,
+        url: `/car/${id}`,
         method: "PUT",
         body: formData,
       }),
@@ -48,7 +55,7 @@ const vehicleApi = createApi({
     }),
     deleteCar: builder.mutation({
       query: (id) => ({
-        url: `/vehicle/${id}`,
+        url: `/car/${id}`,
         method: "DELETE",
       }),
       invalidatesTags: ["vehicle"],
@@ -62,6 +69,7 @@ export const {
   useAddCarMutation,
   useUpdateCarMutation,
   useDeleteCarMutation,
+  useGetCarwithCategoryByIdQuery
 } = vehicleApi;
 
 export default vehicleApi;

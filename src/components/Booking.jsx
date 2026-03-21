@@ -33,7 +33,7 @@ import {
   useLazyFetchRouteQuery,
 } from "../redux/features/booking/bookingApi";
 
-// Leaflet marker icons
+
 const startIcon = new L.Icon({
   iconUrl: greenMarker,
   shadowUrl: markerShadow,
@@ -49,7 +49,7 @@ const endIcon = new L.Icon({
   popupAnchor: [0, -41],
 });
 
-// Form validation
+
 const validationSchema = Yup.object({
   pickLocation: Yup.string()
     .required("Pick location is required")
@@ -96,7 +96,7 @@ const Booking = () => {
   const [duration, setDuration] = useState(null);
   const [error, setError] = useState(null);
 
-  // RTK Query hooks
+
   const [createBooking] = useCreateBookingMutation();
   const [triggerFetchCoordinates] = useLazyFetchCoordinatesQuery();
   const [triggerFetchRoute] = useLazyFetchRouteQuery();
@@ -104,7 +104,7 @@ const Booking = () => {
   const [debouncedPickLocation, setDebouncedPickLocation] = useState("");
   const [debouncedDropLocation, setDebouncedDropLocation] = useState("");
 
-  // Formik setup
+
   const formik = useFormik({
     initialValues: {
       pickLocation: "",
@@ -140,7 +140,6 @@ const Booking = () => {
     },
   });
 
-  // Debounce input changes
   useEffect(() => {
     const pickTimer = setTimeout(
       () => setDebouncedPickLocation(formik.values.pickLocation),
@@ -156,7 +155,7 @@ const Booking = () => {
     };
   }, [formik.values.pickLocation, formik.values.dropLocation]);
 
-  // Fetch coordinates and calculate route
+
   useEffect(() => {
     const calculateRoute = async () => {
       if (!debouncedPickLocation || !debouncedDropLocation) {
@@ -171,7 +170,6 @@ const Booking = () => {
 
       try {
         setError(null);
-        // Fetch start & end coordinates
         const startRes = await triggerFetchCoordinates(
           debouncedPickLocation,
         ).unwrap();
@@ -189,7 +187,6 @@ const Booking = () => {
         setStartCoords(start);
         setEndCoords(end);
 
-        // Fetch route
         const routeRes = await triggerFetchRoute({ start, end }).unwrap();
         const segment = routeRes.features[0].properties.segments[0];
 

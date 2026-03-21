@@ -13,7 +13,6 @@ const VehicleTable = ({ vehicles, categories, handleDelete }) => {
     return category ? category.name : 'Unknown';
   };
 
-
   const filteredVehicles = vehicles.filter((vehicle) =>
     vehicle.carName.toLowerCase().includes(searchTerm.toLowerCase()) ||
     vehicle.carNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -21,8 +20,7 @@ const VehicleTable = ({ vehicles, categories, handleDelete }) => {
     vehicle.status.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  console.log(filteredVehicles);
-  
+
   return (
     <section>
       <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
@@ -123,7 +121,7 @@ const VehicleTable = ({ vehicles, categories, handleDelete }) => {
                     <td className="p-2 whitespace-nowrap">
                       <div className="text-left">
                         <button
-                          onClick={() => vehicle.status !== 'Booked' && handleDelete(vehicle.id)}
+                          onClick={() => vehicle.status !== 'Booked' && handleDelete(vehicle.carId)}
                           disabled={vehicle.status === 'Booked'}
                           className={`transition-colors ${vehicle.status === 'Booked'
                               ? "text-gray-400 cursor-not-allowed" 

@@ -26,8 +26,10 @@ const ManageVehicle = () => {
       toast.success('The car has been successfully deleted!')
       refetch();
     } catch (error) {
-      toast.error('Failed to delete vehicle:', error)
-      console.error('Failed to delete vehicle:', error);
+      console.log(error);
+      
+      toast.error(error.data.message)
+      console.error('Failed to delete vehicle:', error.data.message);
     }
   };
 
