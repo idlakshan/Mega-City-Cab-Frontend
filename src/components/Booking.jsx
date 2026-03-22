@@ -26,6 +26,7 @@ import {
   setCheckoutData,
 } from "../redux/features/checkout/checkout";
 import AutoZoom from "../utils/AutoZoom";
+import flag from "../assets/flag.png"
 
 import {
   useCreateBookingMutation,
@@ -303,7 +304,7 @@ const Booking = () => {
             <div className="flex-1 flex flex-col space-y-4">
               <div className="w-full h-14 flex items-center border border-gray-300 rounded-md px-4 focus-within:ring-2 focus-within:ring-yellow-500">
                 <img
-                  src="src/assets/flag.png"
+                  src={flag}
                   alt="Sri Lanka Flag"
                   className="w-6 h-6 sm:w-8 sm:h-8 mr-2 flex-shrink-0"
                 />

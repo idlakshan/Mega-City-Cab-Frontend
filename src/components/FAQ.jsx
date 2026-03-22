@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
+import arrow from "../assets/arrow.png"
 
 const FAQ = () => {
     const [activeIndex, setActiveIndex] = useState(null);
@@ -75,7 +76,7 @@ const FAQ = () => {
                     className="text-primary-black bg-white py-3 px-6 rounded-md flex items-center justify-center space-x-2 font-semibold mb-6"
                 >
                     <span>See More</span>
-                    <img src="src/assets/arrow.png" alt="arrow icon" className="w-5 h-5" />
+                    <img src={arrow} alt="arrow icon" className="w-5 h-5" />
                 </Link>
             </div>
         </div>
