@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
-import arrow from "../assets/arrow.png"
+import arrow from "/src/assets/arrow.png"
 
 const FAQ = () => {
     const [activeIndex, setActiveIndex] = useState(null);

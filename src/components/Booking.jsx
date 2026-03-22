@@ -26,7 +26,7 @@ import {
   setCheckoutData,
 } from "../redux/features/checkout/checkout";
 import AutoZoom from "../utils/AutoZoom";
-import flag from "../assets/flag.png"
+import flag from "/src/assets/flag.png"
 
 import {
   useCreateBookingMutation,
